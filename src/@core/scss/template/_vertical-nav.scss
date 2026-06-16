@@ -1,0 +1,141 @@
+@use "vuetify/lib/styles/tools/elevation" as elevation;
+@use "@configured-variables" as variables;
+
+body {
+  .layout-nav-type-vertical {
+    // 👉 Layout Vertical nav
+    .layout-vertical-nav {
+      overflow: hidden;
+      height: 100vh;
+      background-color: rgb(var(--v-theme-surface));
+      border: none;
+      box-shadow: none !important;
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        z-index: 1;
+        // background: url(/imgs/nav-top.svg) no-repeat top;
+        background-size: cover;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        // background: url(/imgs/nav-bottom.svg) no-repeat top;
+        background-size: cover;
+      }
+
+      .nav-header {
+        position: relative;
+        z-index: 2;
+
+        .app-logo {
+          .app-title {
+            font-size: 22px;
+          }
+        }
+      }
+
+      .nav-items {
+        position: relative;
+        z-index: 2;
+      }
+
+      // 👉 Nav group active
+      .nav-group.active {
+        > .nav-group-label {
+          color: rgba(
+            var(--v-theme-on-background),
+            var(--v-high-emphasis-opacity)
+          );
+          font-weight: 600;
+        }
+      }
+
+      .nav-section-title .placeholder-icon {
+        margin-inline-start: 0.3rem;
+      }
+    }
+
+    // .layout-vertical-nav .nav-link > :first-child,
+    // .layout-vertical-nav .nav-group > :first-child {
+    //   margin-block: 0.4rem;
+    //   margin-inline: 0.875rem;
+    //   padding-inline: 0.75rem;
+    //   border-radius: 40px;
+    //   background-color: #f3f4f6;
+    //   color: #3d3935;
+
+    //   &.router-link-active.router-link-exact-active {
+    //     background-color: #00758d !important;
+    //     color: #fff;
+    //   }
+    // }
+
+    .layout-vertical-nav .nav-link > :first-child,
+    .layout-vertical-nav .nav-group > :first-child {
+      position: relative;
+      margin-block: 5px;
+      margin-inline: 0px;
+      padding: 1.5rem 0.75rem !important;
+      border-radius: 20px 0 0 20px;
+      color: rgb(var(--v-theme-on-background));
+      background-color: rgb(var(--v-theme-background));
+      height: 64px;
+      max-width: calc(100% - 30px);
+      
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+
+      &.router-link-active.router-link-exact-active {
+        // background-color: #fff !important;
+        // background: #297a65;
+        background: rgb(var(--v-theme-primary));
+        border-radius: 16px 0px 0px 16px;
+        color: #fff;
+
+        &::after {
+          background-color: #fff;
+        }
+      }
+    }
+
+    .layout-vertical-nav .nav-header .header-action {
+      inset-inline-start: 0;
+    }
+
+    .layout-vertical-nav .nav-header {
+      overflow: initial;
+      padding: 1.3rem 0.5px;
+      min-block-size: 64px;
+      margin: 0px;
+      margin-bottom: 10px;
+    }
+  }
+  .v-theme--light {
+    .layout-vertical-nav .nav-link > :first-child,
+    .layout-vertical-nav .nav-group > :first-child {
+      border: solid 2px #f8f9f9;
+    }
+  }
+}
+
+.v-btn.bg-primary .v-progress-circular {
+  color: #fff !important;
+}

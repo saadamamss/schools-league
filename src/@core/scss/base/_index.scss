@@ -1,0 +1,152 @@
+@use "sass:map";
+
+// Layout
+@use "vertical-nav";
+@use "horizontal-nav";
+@use "default-layout";
+@use "default-layout-w-vertical-nav";
+// @use "default-layout-w-horizontal-nav";
+
+// Layouts package
+@use "layouts";
+
+// Skins
+@use "skins";
+
+// Components
+@use "components";
+
+// Utilities
+@use "utilities";
+
+// Misc
+@use "misc";
+
+// Dark
+@use "dark";
+
+// libs
+@use "libs/perfect-scrollbar";
+
+a {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: none;
+}
+
+// Vuetify 3 don't provide margin bottom style like vuetify 2
+p {
+  margin-block-end: 1rem;
+}
+
+// Iconify icon size
+svg.iconify {
+  block-size: 1em;
+  inline-size: 1em;
+}
+
+body {
+  .v-btn__content {
+    letter-spacing: 0;
+  }
+
+  .layout-wrapper.layout-nav-type-vertical
+    .navbar-blur.layout-navbar
+    .navbar-content-container {
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+    border-radius: 0;
+  }
+
+  .layout-wrapper.layout-nav-type-vertical
+    .layout-navbar
+    .navbar-content-container
+    > div {
+    inline-size: 100%;
+    margin-inline: auto;
+    max-inline-size: 1440px !important;
+  }
+
+  .layout-wrapper.layout-nav-type-vertical.layout-navbar-sticky .layout-navbar {
+    inset-block-start: 0;
+    padding-inline: 0;
+    max-inline-size: 100%;
+  }
+
+  .auth-wrapper.auth-bg-color {
+    background: linear-gradient(
+      180deg,
+      #006478 0%,
+      rgba(72, 129, 140, 0.9) 100%
+    );
+  }
+
+  .auth-logo-img {
+    width: 260px;
+
+    @media screen and (min-width: 1600px) {
+      width: 325px;
+    }
+  }
+
+  .auth-bg__vector {
+    height: 100vh;
+    width: 600px;
+    object-fit: contain;
+  }
+
+  .app-logo img {
+    max-inline-size: unset;
+  }
+}
+
+.v-application,
+.text-body-1,
+.text-body-2,
+.text-subtitle-1,
+.text-subtitle-2 {
+  color: rgb(var(--v-theme-dark));
+}
+
+.v-theme--light {
+  .v-btn.v-btn--icon {
+    background-color: #f3f4f6;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4,
+.text-h5,
+.text-h6,
+.text-button,
+.text-overline,
+.v-card-title {
+  line-height: 1.8;
+  font-family: "IBMPlexArabic", Tahoma, sans-serif;
+}
+
+.v-field__outline {
+  --v-field-border-width: 1px;
+  --v-field-border-opacity: 0.15;
+}
+
+body .mapboxgl-popup-content {
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.07);
+}
+
+.v-table {
+  --v-table-header-background-color: #f2f4f7;
+  --v-table-border-color: #e5e7eb;
+
+  .v-data-table__th span {
+    font-weight: 600;
+  }
+}
