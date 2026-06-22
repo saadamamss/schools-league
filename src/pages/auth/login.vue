@@ -1,114 +1,108 @@
+<script setup lang="ts">
+  import { useRouter } from 'vue-router'
+  import { useAuthStore } from '@/stores/auth'
+  import { useAppStore } from '@/stores/app'
+  import { requiredValidator } from '@validators'
+  import { reactive, ref } from 'vue'
+  const isPasswordVisible = ref(false)
+  const router = useRouter()
+  const form = ref<any>(null)
 
-<script setup>
-import { useAuthStore } from "@/stores/Auth";
-import { requiredValidator } from "@validators";
-import { toast } from "vue3-toastify";
-import { ref, reactive, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
-const isPasswordVisible = ref(false);
-const form = ref(null);
+  const formState = reactive({
+    email: '',
+    password: '',
+  })
 
-const formState = reactive({
-  email: "",
-  password: "",
-});
+  const auth = useAuthStore()
+  const appStore = useAppStore()
 
-const auth = useAuthStore();
-const router = useRouter();
+  const isSubmitting = ref(false)
 
-const isSubmitting = ref(false);
+  const loginUser = async () => {
+    const { valid } = await form.value?.validate() ?? { valid: false }
 
-const loginUser = async () => {
-  const { valid } = await form.value.validate();
+    if (!valid) return
 
-  if (!valid) return;
+    try {
+      isSubmitting.value = true
+      const { token, user } = await auth.login(formState)
 
-  try {
-    isSubmitting.value = true;
-    const { token, user } = await auth.login(formState);
+      if (token) {
+        await router.push('/')
+      } else {
+        throw new Error('بيانات تسجيل الدخول غير صحيحة')
+      }
+    } catch (error: any) {
+      if (error.response?.status === 422) {
+        appStore.showSnackbar({
+          message: error.response?.message || 'بيانات الدخول غير صحيحة',
+          color: 'error',
+        })
+        return
+      }
 
-    if (token) {
-      window.location.href = "/";
-    } else {
-      throw new Error("بيانات تسجيل الدخول غير صحيحة");
+      if (error?.response?.data?.status?.message) {
+        appStore.showSnackbar({
+          message: error.response.data.status.message,
+          color: 'error',
+        })
+      } else if (error?.message) {
+        appStore.showSnackbar({
+          message: error.message,
+          color: 'error',
+        })
+      } else {
+        appStore.showSnackbar({
+          message: 'حدث خطأ أثناء تسجيل الدخول',
+          color: 'error',
+        })
+      }
+    } finally {
+      isSubmitting.value = false
     }
-  } catch (error) {
-    console.error("Login error:", error);
-
-    if (error.response?.status == 422) {
-      toast.error(error.response?.message||"بيانات الدخول غير صحيحة", {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-      return;
-    }
-
-    if (error?.response?.data?.status?.message) {
-      toast.error(error.response.data.status.message, {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-    } else if (error?.message) {
-      toast.error(error.message, {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-    } else {
-      toast.error("حدث خطأ أثناء تسجيل الدخول", {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-    }
-  } finally {
-    isSubmitting.value = false;
   }
-};
 </script>
 
 <template>
-  <VCard rounded="xl" class="px-10 py-4">
-    <VCardTitle style="flex: 0" class="px-0">
-     <h1 class="text-md-h3 text-h4 font-weight-bold">تسجيل الدخول!</h1>
+  <VCard class="px-10 py-4" rounded="xl">
+    <VCardTitle class="px-0" style="flex: 0">
+      <h1 class="text-md-h3 text-h4 font-weight-bold">تسجيل الدخول!</h1>
       <p class="text-basea">أدخل بياناتك لتسجيل الدخول إلى حسابك.</p>
     </VCardTitle>
-    <v-divider></v-divider>
-    <VCardText style="flex: 0" class="px-0">
+    <v-divider />
+    <VCardText class="px-0" style="flex: 0">
       <VForm ref="form" @submit.prevent="loginUser">
         <VRow>
-          <VCol cols="12" class="py-1 mb-5">
+          <VCol class="py-1 mb-5" cols="12">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               البريد الإلكتروني
             </label>
             <VTextField
               v-model="formState.email"
-              type="email"
               density="comfortable"
               placeholder="ادخل البريد الإلكتروني"
               rounded="lg"
               :rules="[(v) => !!v || 'البريد الإلكتروني مطلوب']"
+              type="email"
             />
           </VCol>
 
-          <VCol cols="12" class="py-1 mb-5">
+          <VCol class="py-1 mb-5" cols="12">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               كلمة المرور
             </label>
             <VTextField
               v-model="formState.password"
-              variant="outlined"
+              :append-inner-icon="
+                isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'
+              "
               bg-color="white"
               density="comfortable"
               placeholder="أدخل كلمة المرور"
               rounded="lg"
               :rules="[(v) => !!v || 'كلمة المرور مطلوبة']"
               :type="isPasswordVisible ? 'text' : 'password'"
-              :append-inner-icon="
-                isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
-              "
+              variant="outlined"
               @click:append-inner="isPasswordVisible = !isPasswordVisible"
             />
           </VCol>
@@ -120,12 +114,12 @@ const loginUser = async () => {
               نسيت كلمة المرور؟
             </RouterLink>
             <VBtn
-              rounded="pill"
-              :loading="isSubmitting"
-              type="submit"
-              size="large"
-              height="54"
               color="primary"
+              height="54"
+              :loading="isSubmitting"
+              rounded="pill"
+              size="large"
+              type="submit"
               width="180"
             >
               تسجيل الدخول

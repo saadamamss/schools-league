@@ -1,94 +1,98 @@
-<script setup>
-import { useTheme } from "vuetify";
-import BarChart from "@/@core/libs/chartjs/components/BarChart";
-import { getLatestBarChartConfig } from "@core/libs/chartjs/chartjsConfig";
+<script setup lang="ts">
+  import { useTheme } from 'vuetify'
+  import BarChart from '@/@core/libs/chartjs/components/BarChart'
+  import { getLatestBarChartConfig } from '@core/libs/chartjs/chartjsConfig'
 
-const props = defineProps({
-  colors: {
-    type: null,
-    required: true,
-  },
-  chartData: {
-    type: Array,
-    required: true,
-  },
-});
+  const props = defineProps<{
+    colors: Record<string, any>
+    chartData: any[]
+  }>()
 
-const vuetifyTheme = useTheme();
-const chartOptions = computed(() =>
-  getLatestBarChartConfig(vuetifyTheme.current.value)
-);
+  const vuetifyTheme = useTheme()
+  const chartOptions = computed(() =>
+    getLatestBarChartConfig(vuetifyTheme.current.value)
+  )
 
-const Data = reactive({
-  labels: [
-    "يناير",
-    "فبراير",
-    "مارس",
-    "إبريل",
-    "مايو",
-    "يونيو",
-    "يوليو",
-    "أغسطس",
-    "سبتمبر",
-    "أكتوبر",
-    "نوفمبر",
-    "ديسمبر",
-  ],
-  datasets: [
-    {
-      maxBarThickness: 15,
-      backgroundColor: props.colors.primary,
-      borderColor: "transparent",
-      borderRadius: {
-        topRight: 15,
-        topLeft: 15,
+  interface Dataset {
+    maxBarThickness: number
+    backgroundColor: string
+    borderColor: string
+    borderRadius: { topRight: number; topLeft: number }
+    data: number[]
+  }
+
+  const Data = reactive<{
+    labels: string[]
+    datasets: Dataset[]
+  }>({
+    labels: [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'إبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
+    ],
+    datasets: [
+      {
+        maxBarThickness: 15,
+        backgroundColor: props.colors.primary,
+        borderColor: 'transparent',
+        borderRadius: {
+          topRight: 15,
+          topLeft: 15,
+        },
+        data: [],
       },
-      data: [],
-    },
-  ],
-});
+    ],
+  })
 
-onUpdated(() => {
-  let data = [];
-  props.chartData.map((ctd) => {
-    // Data.labels.push(ctd.month)
-    data.push(ctd.count);
-  });
-  Data.datasets[0].data = data;
-});
+  onUpdated(() => {
+    const data: any[] = []
+    props.chartData.forEach((ctd: any) => {
+      data.push(ctd.count)
+    })
+    Data.datasets[0].data = data
+  })
 
-const data = {
-  labels: [
-    "يناير",
-    "فبراير",
-    "مارس",
-    "إبريل",
-    "مايو",
-    "يونيو",
-    "يوليو",
-    "أغسطس",
-    "سبتمبر",
-    "أكتوبر",
-    "نوفمبر",
-    "ديسمبر",
-  ],
-  datasets: [
-    {
-      maxBarThickness: 15,
-      backgroundColor: props.colors.primary,
-      borderColor: "transparent",
-      borderRadius: {
-        topRight: 15,
-        topLeft: 15,
+  const data = {
+    labels: [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'إبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
+    ],
+    datasets: [
+      {
+        maxBarThickness: 15,
+        backgroundColor: props.colors.primary,
+        borderColor: 'transparent',
+        borderRadius: {
+          topRight: 15,
+          topLeft: 15,
+        },
+        data: [],
       },
-      data: [],
-    },
-  ],
-};
+    ],
+  }
 </script>
 
 <template>
-  <VCard :loading="!props.chartData" height="400">
-    <BarChart :height="300" :chart-data="Data" :chart-options="chartOptions" />
+  <VCard height="400" :loading="!props.chartData">
+    <BarChart :chart-data="Data" :chart-options="chartOptions" :height="300" />
   </VCard>
 </template>

@@ -1,12 +1,12 @@
-<script setup>
-const props = defineProps(["size"]);
+<script setup lang="ts">
+  const props = defineProps(['size'])
 </script>
 <template>
   <svg
-    :width="size || 33"
+    fill="none"
     :height="size || 32"
     viewBox="0 0 33 32"
-    fill="none"
+    :width="size || 33"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path

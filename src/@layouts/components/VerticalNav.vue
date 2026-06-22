@@ -1,117 +1,115 @@
-<script setup>
-import { injectionKeyIsVerticalNavHovered, useLayouts } from "@layouts";
-import {
-  VerticalNavGroup,
-  VerticalNavLink,
-  VerticalNavSectionTitle,
-} from "@layouts/components";
-import { config } from "@layouts/config";
-import LogoutIcon from "@/components/icons/logouticon.vue";
-import { PerfectScrollbar } from "vue3-perfect-scrollbar";
-import { useAuthStore } from "@/stores/Auth";
-import { toast } from "vue3-toastify";
-import { authService } from "@/services/auth.service";
-import { useRouter, useRoute } from "vue-router";
-import { hasPermission } from "@core/utils/permissions";
-import axios from "@/plugins/axios";
-import Logo from "@/@core/components/icons/logo.vue";
-import { userHasRoutePermission } from "@/utils/usersTypes";
-// import { LOCAL_STORAGE_USER_KEY } from "@/config";
+<script setup lang="ts">
+  import { injectionKeyIsVerticalNavHovered, useLayouts } from '@layouts'
+  import {
+    VerticalNavGroup,
+    VerticalNavLink,
+    VerticalNavSectionTitle,
+  } from '@layouts/components'
+  import { config } from '@layouts/config'
+  import LogoutIcon from '@/components/icons/logouticon.vue'
+  import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+  import { useAuthStore } from '@/stores/auth'
+  import { useAppStore } from '@/stores/app'
+  import { authService } from '@/services/auth.service'
+  import { useRoute, useRouter } from 'vue-router'
+  import { hasPermission } from '@core/utils/permissions'
+  import Logo from '@/@core/components/icons/logo.vue'
+  import { userHasRoutePermission } from '@/utils/usersTypes'
+  // import { LOCAL_STORAGE_USER_KEY } from "@/config";
 
-const props = defineProps({
-  tag: {
-    type: [String, null],
-    required: false,
-    default: "aside",
-  },
-  navItems: {
-    type: null,
-    required: true,
-  },
-  isOverlayNavActive: {
-    type: Boolean,
-    required: true,
-  },
-  toggleIsOverlayNavActive: {
-    type: Function,
-    required: true,
-  },
-});
-const logoutItem = {
-  title: "تسجيل الخروج",
-  icon: LogoutIcon,
-};
-const authUserType = computed(() => useAuthStore().user?.user?.user_type?.code);
-
-const refNav = ref();
-const { width: windowWidth } = useWindowSize();
-const isHovered = useElementHover(refNav);
-
-const auth = useAuthStore();
-const router = useRouter();
-const isLoggingOut = ref(false);
-
-provide(injectionKeyIsVerticalNavHovered, isHovered);
-
-const {
-  isVerticalNavCollapsed: isCollapsed,
-  isLessThanOverlayNavBreakpoint,
-  isVerticalNavMini,
-  isAppRtl,
-} = useLayouts();
-
-// const hideTitleAndIcon = isVerticalNavMini(windowWidth, isHovered);
-
-const resolveNavItemComponent = (item) => {
-  if ("heading" in item) return VerticalNavSectionTitle;
-  if ("children" in item) return VerticalNavGroup;
-
-  return VerticalNavLink;
-};
-
-const route = useRoute();
-const user_permissions = reactive([]);
-
-watch(
-  () => route.name,
-  () => {
-    props.toggleIsOverlayNavActive(false);
+  const props = defineProps({
+    tag: {
+      type: [String, null],
+      required: false,
+      default: 'aside',
+    },
+    navItems: {
+      type: null,
+      required: true,
+    },
+    isOverlayNavActive: {
+      type: Boolean,
+      required: true,
+    },
+    toggleIsOverlayNavActive: {
+      type: Function,
+      required: true,
+    },
+  })
+  const logoutItem = {
+    title: 'تسجيل الخروج',
+    icon: LogoutIcon,
   }
-);
+  const authUserType = computed(() => (useAuthStore().user as any)?.user?.user_type?.code)
 
-onMounted(() => {
-  user_permissions.value = JSON.parse(localStorage.getItem("SAR_TOKEN"));
-});
+  const refNav = ref()
+  const { width: windowWidth } = useWindowSize()
+  const isHovered = useElementHover(refNav)
 
-// const userNavItems = computed(() => {
-//   return props.navItems
-// })
+  const auth = useAuthStore()
+  const appStore = useAppStore()
+  const router = useRouter()
+  const isLoggingOut = ref(false)
 
-const isVerticalNavScrolled = ref(false);
-const updateIsVerticalNavScrolled = (val) =>
-  (isVerticalNavScrolled.value = val);
+  provide(injectionKeyIsVerticalNavHovered, isHovered)
 
-const handleNavScroll = (evt) => {
-  isVerticalNavScrolled.value = evt.target.scrollTop > 0;
-};
+  const {
+    isVerticalNavCollapsed: isCollapsed,
+    isLessThanOverlayNavBreakpoint,
+    isVerticalNavMini,
+    isAppRtl,
+  } = useLayouts()
 
-const handleLogout = async () => {
-  isLoggingOut.value = true;
-  try {
-    // await axios.post("/auth/logout");
-    // First clear the auth store
-    await auth.logout();
-    // Then clear any remaining session data
-    // authService.logout();
-    // Finally redirect to login
-    await router.push("/auth/login");
-  } catch (error) {
-    console.error("Logout error:", error);
-    toast.error("حدث خطأ غير متوقع!", { rtl: true, hideProgressBar: true });
-  } finally {
-    isLoggingOut.value = false;
+  // const hideTitleAndIcon = isVerticalNavMini(windowWidth, isHovered);
+
+  const resolveNavItemComponent = (item: Record<string, any>) => {
+    if ('heading' in item) return VerticalNavSectionTitle
+    if ('children' in item) return VerticalNavGroup
+
+    return VerticalNavLink
   }
-};
+
+  const route = useRoute()
+  const userPermissions = ref<any[]>([])
+
+  watch(
+    () => route.name,
+    () => {
+      props.toggleIsOverlayNavActive(false)
+    }
+  )
+
+  onMounted(() => {
+    userPermissions.value = JSON.parse(localStorage.getItem('SAR_TOKEN') || '[]')
+  })
+
+  // const userNavItems = computed(() => {
+  //   return props.navItems
+  // })
+
+  const isVerticalNavScrolled = ref(false)
+  const updateIsVerticalNavScrolled = (val: boolean) =>
+    (isVerticalNavScrolled.value = val)
+
+  const handleNavScroll = (evt: any) => {
+    isVerticalNavScrolled.value = evt.target.scrollTop > 0
+  }
+
+  const handleLogout = async () => {
+    isLoggingOut.value = true
+    try {
+      // First clear the auth store
+      await auth.logout()
+      // Then clear any remaining session data
+      // authService.logout();
+      // Finally redirect to login
+      await router.push('/auth/login')
+    } catch (error: any) {
+      appStore.showSnackbar({ message: 'حدث خطأ غير متوقع!', color: 'error' })
+    } finally {
+      isLoggingOut.value = false
+    }
+  }
 </script>
 
 <template>
@@ -137,8 +135,8 @@ const handleLogout = async () => {
       <slot name="nav-header">
         <RouterLink
           v-if="!isCollapsed || isHovered"
-          to="/"
           class="w-100 app-logo text-primary-text pt-5 mb-2 d-flex align-center justify-center"
+          to="/"
         >
           <Logo />
         </RouterLink>
@@ -149,47 +147,47 @@ const handleLogout = async () => {
       <!-- <div class="vertical-nav-items-shadow"/> -->
     </slot>
     <!--  -->
-    <div class="py-5"></div>
+    <div class="py-5" />
     <slot
       name="nav-items position-relative"
       :update-is-vertical-nav-scrolled="updateIsVerticalNavScrolled"
     >
       <PerfectScrollbar
         :key="isAppRtl"
-        tag="ul"
         class="nav-items pb-4"
         :options="{ wheelPropagation: false }"
+        tag="ul"
         @ps-scroll-y="handleNavScroll"
       >
-        <template v-for="(item, index) in navItems" :key="index">
-          <v-divider v-if="item.divider" class="mt-10 mb-10"></v-divider>
-          <template v-if="!userHasRoutePermission(item.to.name)"></template>
+        <template v-for="(item, idx) in navItems" :key="idx">
+          <v-divider v-if="item.divider" class="mt-10 mb-10" />
+          <template v-if="!userHasRoutePermission(item.to.name)" />
           <template v-else>
             <Component
               :is="resolveNavItemComponent(item)"
-              :item="item"
               :class="item.permission"
+              :item="item"
             />
             <template v-for="(child, index) in item.children" :key="index">
               <Component
                 :is="resolveNavItemComponent(child)"
-                :item="child"
                 :class="child.permission"
+                :item="child"
               />
             </template>
           </template>
         </template>
         <template v-if="authUserType === 'organizer'">
-          <v-divider class="mt-3 mb-4"></v-divider>
+          <v-divider class="mt-3 mb-4" />
           <div style="max-width: 230px">
             <v-btn
-              @click="handleLogout"
-              :loading="isLoggingOut"
-              :disabled="isLoggingOut"
               block
-              color="#667178"
-              variant="link"
               class="justify-space-between border logoutbtn"
+              color="#667178"
+              :disabled="isLoggingOut"
+              :loading="isLoggingOut"
+              variant="text"
+              @click="handleLogout"
             >
               <LogoutIcon />
               <span class="nav-item-title ms-3 text-base"> تسجيل الخروج </span>
@@ -197,14 +195,14 @@ const handleLogout = async () => {
           </div>
         </template>
       </PerfectScrollbar>
-      <div class="nav-link py-3 px-2 pe-6" v-if="authUserType != 'organizer'">
+      <div v-if="authUserType != 'organizer'" class="nav-link py-3 px-2 pe-6">
         <v-btn
-          @click="handleLogout"
-          :disabled="isLoggingOut"
           block
-          color="#667178"
-          variant="link"
           class="rounded-pill justify-space-between"
+          color="#667178"
+          :disabled="isLoggingOut"
+          variant="text"
+          @click="handleLogout"
         >
           <LogoutIcon />
           <span class="nav-item-title ms-3 text-base"> تسجيل الخروج </span>

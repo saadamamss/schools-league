@@ -1,30 +1,30 @@
-<script setup>
-import AppSearchHeaderBg from '@images/pages/app-search-header-bg.png'
+<script setup lang="ts">
+  import AppSearchHeaderBg from '@images/pages/app-search-header-bg.png'
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: false,
-  },
-  subtitle: {
-    type: String,
-    required: false,
-  },
-  customClass: {
-    type: String,
-    required: false,
-  },
-})
+  const props = defineProps({
+    title: {
+      type: String,
+      required: false,
+    },
+    subtitle: {
+      type: String,
+      required: false,
+    },
+    customClass: {
+      type: String,
+      required: false,
+    },
+  })
 
-defineOptions({ inheritAttrs: false })
+  defineOptions({ inheritAttrs: false })
 </script>
 
 <template>
   <!-- 👉 Search Banner  -->
   <VCard
-    flat
     class="text-center search-header"
     :class="props.customClass"
+    flat
     :style="`background: url(${AppSearchHeaderBg});`"
   >
     <VCardText>
@@ -35,13 +35,13 @@ defineOptions({ inheritAttrs: false })
       <!-- 👉 Search Input -->
       <VTextField
         v-bind="$attrs"
-        placeholder="Search a question..."
         class="search-header-input mx-auto my-3"
         density="comfortable"
+        placeholder="Search a question..."
       >
         <template #prepend-inner>
           <VIcon
-            icon="tabler-search"
+            icon="mdi-magnify"
             size="23"
           />
         </template>

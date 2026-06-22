@@ -1,7 +1,13 @@
 <template>
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.66665 13.9999C11.1644 13.9999 14 11.1644 14 7.66658C14 4.16878 11.1644 1.33325 7.66665 1.33325C4.16884 1.33325 1.33331 4.16878 1.33331 7.66658C1.33331 11.1644 4.16884 13.9999 7.66665 13.9999Z" stroke="#929A9F" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M14.6666 14.6666L13.3333 13.3333" stroke="#929A9F" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+  <svg
+    fill="none"
+    height="16"
+    viewBox="0 0 16 16"
+    width="16"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M7.66665 13.9999C11.1644 13.9999 14 11.1644 14 7.66658C14 4.16878 11.1644 1.33325 7.66665 1.33325C4.16884 1.33325 1.33331 4.16878 1.33331 7.66658C1.33331 11.1644 4.16884 13.9999 7.66665 13.9999Z" stroke="#929A9F" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M14.6666 14.6666L13.3333 13.3333" stroke="#929A9F" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
 
 </template>

@@ -8,7 +8,7 @@ test.describe('App E2E', () => {
 
   test('login page renders correctly', async ({ page }) => {
     await page.goto('/auth/login')
-    await expect(page.locator('h5')).toContainText('تسجيل الدخول')
+    await expect(page.locator('h1')).toContainText('تسجيل الدخول')
     await expect(page.locator('input[type="email"]')).toBeVisible()
     await expect(page.locator('input[type="password"]')).toBeVisible()
     await expect(page.locator('button[type="submit"]')).toBeVisible()

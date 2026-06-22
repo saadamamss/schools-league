@@ -1,86 +1,72 @@
-<script setup>
-import { computed, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
+<script setup lang="ts">
+  import { computed, onMounted, watch } from 'vue'
+  import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const props = defineProps({
-  questionnaire: {
-    type: Object,
-    default: () => ({}),
-  },
-  id: {
-    type: [Number, String],
-    required: true,
-  },
-  title: {
-    type: String,
-    default: "",
-  },
-  contract: {
-    type: Object,
-    default: () => ({}),
-  },
-  imtithal_phase: {
-    type: Object,
-    default: () => ({}),
-  },
-  created_at: {
-    type: String,
-    default: "",
-  },
-  updated_at: {
-    type: String,
-    default: "",
-  },
-});
+  const router = useRouter()
+  const props = defineProps({
+    questionnaire: {
+      type: Object,
+      default: () => ({}),
+    },
+    id: {
+      type: [Number, String],
+      required: true,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    contract: {
+      type: Object,
+      default: () => ({}),
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    imtithal_phase: {
+      type: Object,
+      default: () => ({}),
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    created_at: {
+      type: String,
+      default: '',
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    updated_at: {
+      type: String,
+      default: '',
+    },
+  })
 
-// Computed properties to extract nested data
-const contractName = computed(() => props.contract?.name || "");
-const phaseName = computed(() => props.imtithal_phase?.title || "");
+  // Computed properties to extract nested data
+  const contractName = computed(() => props.contract?.name || '')
+  const phaseName = computed(() => props.imtithal_phase?.title || '')
 
-// Debug watcher for props
-watch(
-  () => props,
-  (newProps) => {
-    console.log("Questionnaire Widget Props:", {
-      id: newProps.id,
-      title: newProps.title,
-      contract: newProps.contract,
-      imtithal_phase: newProps.imtithal_phase,
-      created_at: newProps.created_at,
-      updated_at: newProps.updated_at,
-    });
-  },
-  { immediate: true, deep: true }
-);
-
-const handleClick = () => {
-  router.push(`/questionnaires/details?id=${props.id}`);
-};
-
-const formatDate = (date) => {
-  if (!date) return "";
-  try {
-    const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) return date;
-
-    // Format date in Arabic with Gregorian calendar
-    const formatter = new Intl.DateTimeFormat("ar", {
-      calendar: "gregory",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-
-    return formatter.format(dateObj);
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return date;
+  const handleClick = () => {
+    router.push(`/questionnaires/details?id=${props.id}`)
   }
-};
+
+  const formatDate = (date: string) => {
+    if (!date) return ''
+    try {
+      const dateObj = new Date(date)
+      if (isNaN(dateObj.getTime())) return date
+
+      // Format date in Arabic with Gregorian calendar
+      const formatter = new Intl.DateTimeFormat('ar', {
+        calendar: 'gregory',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      })
+
+      return formatter.format(dateObj)
+    } catch {
+      return date
+    }
+  }
 </script>
 
 <template>
@@ -93,27 +79,27 @@ const formatDate = (date) => {
         <div>
           <h2>
             <router-link
-              :to="`/questionnaires/details?id=${id}`"
               class="text-body-2 text-black font-weight-bold"
               style="white-space: wrap"
+              :to="`/questionnaires/details?id=${id}`"
             >
               {{ title }}
             </router-link>
           </h2>
         </div>
         <v-btn
-          size="small"
-          elevation="0"
           class="btn-card-link px-3 text-primary rounded-xl"
+          elevation="0"
+          size="small"
           @click.stop="handleClick"
         >
           <span class="font-weight-bold">عرض</span>
           <svg
-            style="rotate: 180deg"
-            width="1.1rem"
-            height="1.1rem"
-            viewBox="0 0 16 16"
             fill="none"
+            height="1.1rem"
+            style="rotate: 180deg"
+            viewBox="0 0 16 16"
+            width="1.1rem"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -127,86 +113,86 @@ const formatDate = (date) => {
       <div class="d-flex flex-column mt-3">
         <div class="d-flex align-center mb-2">
           <svg
-            width="1rem"
+            class="me-2"
+            fill="none"
             height="1rem"
             viewBox="0 0 24 24"
-            fill="none"
+            width="1rem"
             xmlns="http://www.w3.org/2000/svg"
-            class="me-2"
           >
             <path
               d="M8 2V5"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
             <path
               d="M16 2V5"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
             <path
               d="M3.5 9.09H20.5"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
             <path
               d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
             <path
               d="M15.6947 13.7H15.7037"
               stroke="#667178"
-              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="2"
             />
             <path
               d="M15.6947 16.7H15.7037"
               stroke="#667178"
-              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="2"
             />
             <path
               d="M11.9955 13.7H12.0045"
               stroke="#667178"
-              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="2"
             />
             <path
               d="M11.9955 16.7H12.0045"
               stroke="#667178"
-              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="2"
             />
             <path
               d="M8.29431 13.7H8.30329"
               stroke="#667178"
-              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="2"
             />
             <path
               d="M8.29431 16.7H8.30329"
               stroke="#667178"
-              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="2"
             />
           </svg>
           <span class="text-body-2 text-grey-darken-1">{{
@@ -215,44 +201,44 @@ const formatDate = (date) => {
         </div>
         <div class="d-flex align-center mb-2">
           <svg
-            width="1rem"
+            class="me-2"
+            fill="none"
             height="1rem"
             viewBox="0 0 24 24"
-            fill="none"
+            width="1rem"
             xmlns="http://www.w3.org/2000/svg"
-            class="me-2"
           >
             <path
               d="M21 7V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V7C3 4 4.5 2 8 2H16C19.5 2 21 4 21 7Z"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
             <path
               d="M14.5 4.5V6.5C14.5 7.6 15.4 8.5 16.5 8.5H18.5"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
             <path
               d="M8 13H12"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
             <path
               d="M8 17H16"
               stroke="#667178"
-              stroke-width="1.5"
-              stroke-miterlimit="10"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-miterlimit="10"
+              stroke-width="1.5"
             />
           </svg>
           <span class="text-body-2 text-grey-darken-1">{{

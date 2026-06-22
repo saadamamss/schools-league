@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="0" class="note-card rounded-lg pa-4">
+  <v-card class="note-card rounded-lg pa-4" elevation="0">
     <div class="d-flex justify-space-between align-center mb-4">
       <div class="d-flex align-center gap-2">
         <v-icon color="#667178">mdi-map-marker</v-icon>
@@ -13,10 +13,10 @@
     <div class="mb-4">
       <div class="d-flex align-center gap-2 mb-2">
         <v-chip
-          color="#667178"
-          text-color="white"
-          size="small"
           class="font-weight-medium"
+          color="#667178"
+          size="small"
+          text-color="white"
         >
           {{ note.report_type.title }}
         </v-chip>
@@ -31,14 +31,14 @@
       <div class="d-flex align-center gap-2">
         <v-avatar size="32">
           <v-img
-            :src="getAvatarUrl(note.reportBy)"
             :alt="getFullName(note.reportBy)"
-          ></v-img>
+            :src="getAvatarUrl(note.reportBy)"
+          />
         </v-avatar>
         <span class="text-body-2">{{ getFullName(note.reportBy) }}</span>
       </div>
       <div class="d-flex align-center gap-2">
-        <v-btn icon variant="text" size="small" class="eye-btn">
+        <v-btn class="eye-btn" icon size="small" variant="text">
           <v-icon>mdi-eye-outline</v-icon>
         </v-btn>
         <button class="escalate-btn py-2 rounded-pill">
@@ -50,53 +50,49 @@
   </v-card>
 </template>
 
-<script setup>
-import { defineProps } from "vue";
+<script setup lang="ts">
 
-const props = defineProps({
-  note: {
-    type: Object,
-    required: true,
-  },
-});
+  const props = defineProps<{
+    note: Record<string, any>
+  }>()
 
-const getStatusClass = (status) => {
-  switch (status) {
-    case "CLOSED":
-      return "مغلق";
-    case "PENDING":
-      return "مفتوح";
-    case "REJECTED":
-      return "مرفوض";
-    default:
-      return "";
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case 'CLOSED':
+        return 'مغلق'
+      case 'PENDING':
+        return 'مفتوح'
+      case 'REJECTED':
+        return 'مرفوض'
+      default:
+        return ''
+    }
   }
-};
 
-const getStatusText = (status) => {
-  return getStatusClass(status);
-};
+  const getStatusText = (status: string) => {
+    return getStatusClass(status)
+  }
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString("ar-SA", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('ar-SA', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
 
-const getFullName = (user) => {
-  return `${user.firstname} ${user.lastname}`;
-};
+  const getFullName = (user: Record<string, any>) => {
+    return `${user.firstname} ${user.lastname}`
+  }
 
-const getAvatarUrl = (user) => {
-  return user.avatar || "https://placehold.co/400";
-};
+  const getAvatarUrl = (user: Record<string, any>) => {
+    return user.avatar || 'https://placehold.co/400'
+  }
 </script>
 
 <style lang="scss" scoped>
 .note-card {
-  border: 1px solid #eee;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
   transition: all 0.3s ease;
 
   &:hover {

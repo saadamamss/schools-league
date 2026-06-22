@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ميدان</title>
     <!-- <link rel="stylesheet" type="text/css" href="/loader.css" /> -->
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88&libraries=places"></script> -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self'; font-src 'self' data:;">
   </head>
 
   <body>
@@ -21,7 +21,7 @@
         </div>
       </div> -->
     </div>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       document.documentElement.style.setProperty("--initial-loader-bg", "#fff");
       document.documentElement.style.setProperty(

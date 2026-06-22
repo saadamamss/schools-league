@@ -1,47 +1,41 @@
-<script setup>
-const props = defineProps({
-  userData: {
-    type: Object,
-    required: true,
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-})
+<script setup lang="ts">
+  const props = defineProps<{
+    userData: Record<string, any>
+    isDialogVisible: boolean
+  }>()
 
-const emit = defineEmits([
-  'update:modelValue',
-  'submit',
-  'update:isDialogVisible',
-])
+  const emit = defineEmits<{
+    (e: 'update:modelValue', val: boolean): void
+    (e: 'submit', val: any): void
+    (e: 'update:isDialogVisible', val: boolean): void
+  }>()
 
-const userData = ref(structuredClone(toRaw(props.userData)))
-const isUseAsBillingAddress = ref(false)
+  const userData = ref(structuredClone(toRaw(props.userData)))
+  const isUseAsBillingAddress = ref(false)
 
-watch(props, () => {
-  userData.value = structuredClone(toRaw(props.userData))
-})
+  watch(props, () => {
+    userData.value = structuredClone(toRaw(props.userData))
+  })
 
-const onFormSubmit = () => {
-  emit('update:modelValue', false)
-  emit('submit', userData.value)
-}
+  const onFormSubmit = () => {
+    emit('update:modelValue', false)
+    emit('submit', userData.value)
+  }
 
-const onFormReset = () => {
-  userData.value = structuredClone(toRaw(props.userData))
-  emit('update:isDialogVisible', false)
-}
+  const onFormReset = () => {
+    userData.value = structuredClone(toRaw(props.userData))
+    emit('update:isDialogVisible', false)
+  }
 
-const dialogModelValueUpdate = val => {
-  emit('update:isDialogVisible', val)
-}
+  const dialogModelValueUpdate = (val: boolean) => {
+    emit('update:isDialogVisible', val)
+  }
 </script>
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 700"
     :model-value="props.isDialogVisible"
+    :width="$vuetify.display.smAndDown ? 'auto' : 700"
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
@@ -138,9 +132,9 @@ const dialogModelValueUpdate = val => {
               <VSelect
                 v-model="userData.language"
                 chips
-                multiple
-                label="Language"
                 :items="['English', 'Spanish', 'Portuguese', 'Russian', 'French', 'German']"
+                label="Language"
+                multiple
               />
             </VCol>
 
@@ -151,8 +145,8 @@ const dialogModelValueUpdate = val => {
             >
               <VSelect
                 v-model="userData.country"
-                label="Country"
                 :items="['USA', 'UK', 'Spain', 'Russia', 'France', 'Germany']"
+                label="Country"
               />
             </VCol>
 
@@ -167,8 +161,8 @@ const dialogModelValueUpdate = val => {
 
             <!-- 👉 Submit and Cancel -->
             <VCol
-              cols="12"
               class="d-flex flex-wrap justify-center gap-4"
+              cols="12"
             >
               <VBtn type="submit">
                 Submit

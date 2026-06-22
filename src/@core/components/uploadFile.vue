@@ -7,29 +7,28 @@
       {{ title }}{{ required ? "*" : "" }}
     </h3>
     <v-card
-      variant="outlined"
       class="upload-card"
       :class="{
         'circle-card': isImageOnly || isProfilePic,
         'has-preview': filesValue.length > 0 && (isImageOnly || isProfilePic),
       }"
+      variant="outlined"
       @click="triggerFileInput"
     >
       <div class="upload-area" :class="{ 'has-file': filesValue.length > 0 }">
         <v-file-input
           ref="fileInput"
-          :model-value="filesValue"
-          :loading="loading"
           :accept="accept"
+          class="upload-input"
+          density="compact"
+          hide-details
+          :loading="loading"
+          :model-value="filesValue"
           :multiple="multiple"
           :rules="required ? fileRules : undefined"
-          hide-details
           variant="plain"
-          density="compact"
-          class="upload-input"
           @update:model-value="handleFileChange"
-        >
-        </v-file-input>
+        />
 
         <!-- Files Grid Preview -->
         <div v-if="filesValue.length > 0" class="files-grid">
@@ -37,10 +36,10 @@
             <v-col
               v-for="(file, index) in filesValue"
               :key="file.name"
-              cols="12"
-              sm="12"
-              md="6"
               class="file-item"
+              cols="12"
+              md="6"
+              sm="12"
             >
               <!-- Image Preview -->
               <div
@@ -50,9 +49,9 @@
               >
                 <img
                   v-if="previewUrls[file.name]"
-                  :src="previewUrls[file.name]"
                   :alt="file.name"
-                />
+                  :src="previewUrls[file.name]"
+                >
                 <div class="image-overlay">
                   <div class="file-info text-center">
                     <div class="text-subtitle-2 text-white">
@@ -64,9 +63,9 @@
                   </div>
                   <v-btn
                     color="error"
-                    variant="text"
                     density="compact"
                     icon
+                    variant="text"
                     @click.stop="removeFile(index)"
                   >
                     <v-icon>mdi-close</v-icon>
@@ -78,9 +77,11 @@
               <div v-else class="file-preview">
                 <div class="d-flex align-center justify-space-between pa-4">
                   <div class="d-flex align-center">
-                    <v-icon color="primary" size="24" class="ml-2"
-                      >mdi-file-document-outline</v-icon
-                    >
+                    <v-icon
+                      class="ml-2"
+                      color="primary"
+                      size="24"
+                    >mdi-file-document-outline</v-icon>
                     <div>
                       <div class="text-body-2">{{ file.name }}</div>
                       <div class="text-caption text-grey">
@@ -90,9 +91,9 @@
                   </div>
                   <v-btn
                     color="error"
-                    variant="text"
                     density="compact"
                     icon
+                    variant="text"
                     @click.stop="removeFile(index)"
                   >
                     <v-icon>mdi-close</v-icon>
@@ -106,10 +107,10 @@
         <!-- Upload Placeholder -->
         <div v-else class="upload-placeholder">
           <svg
-            width="18"
+            fill="none"
             height="16"
             viewBox="0 0 18 16"
-            fill="none"
+            width="18"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -127,11 +128,11 @@
               isImageOnly || isProfilePic
                 ? " "
                 : multiple
-                ? `اسحب وأفلت أو اختر الملفات (${maxFiles} كحد أقصى)`
-                : "اسحب وأفلت أو اختر الملف الذي تريد تحميله"
+                  ? `اسحب وأفلت أو اختر الملفات (${maxFiles} كحد أقصى)`
+                  : "اسحب وأفلت أو اختر الملف الذي تريد تحميله"
             }}
           </div>
-          <div class="text-caption text-grey-darken-1" v-if="!isImageOnly">
+          <div v-if="!isImageOnly" class="text-caption text-grey-darken-1">
             الحد الأقصى للحجم 5 ميجا بايت
           </div>
         </div>
@@ -141,159 +142,152 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+  import { computed, ref, watch } from 'vue'
 
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => [],
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  required: {
-    type: Boolean,
-    default: false,
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-  isImageOnly: {
-    type: Boolean,
-    default: false,
-  },
-  isProfilePic: {
-    type: Boolean,
-    default: false,
-  },
-  accept: {
-    type: String,
-    default: "image/*,.pdf",
-  },
-  showArrow: {
-    type: Boolean,
-    default: false,
-  },
-  multiple: {
-    type: Boolean,
-    default: false,
-  },
-  maxFiles: {
-    type: Number,
-    default: 5,
-  },
-});
+  const props = defineProps({
+    modelValue: {
+      type: Array as () => File[],
+      default: () => [],
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    isImageOnly: {
+      type: Boolean,
+      default: false,
+    },
+    isProfilePic: {
+      type: Boolean,
+      default: false,
+    },
+    accept: {
+      type: String,
+      default: 'image/*,.pdf',
+    },
+    showArrow: {
+      type: Boolean,
+      default: false,
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    maxFiles: {
+      type: Number,
+      default: 5,
+    },
+  })
 
-const emit = defineEmits(["update:modelValue", "change"]);
+  const emit = defineEmits(['update:modelValue', 'change'])
 
-const filesValue = ref<File[]>([]);
-const fileInput = ref<any>(null);
-const previewUrls = ref<{ [key: string]: string }>({});
+  const filesValue = ref<File[]>([])
+  const fileInput = ref<any>(null)
+  const previewUrls = ref<{ [key: string]: string }>({})
 
-const fileRules = [
-  (v: File[] | null) =>
-    props.required ? (v && v.length > 0) || "هذا الحقل مطلوب" : true,
-  (v: File[] | null) => {
-    if (!v) return true;
-    return (
-      v.every((file) => file.size <= 5 * 1024 * 1024) ||
-      "حجم الملف يجب أن لا يتجاوز 5 ميجا بايت"
-    );
-  },
-];
+  const fileRules = [
+    (v: File[] | null) =>
+      props.required ? (v && v.length > 0) || 'هذا الحقل مطلوب' : true,
+    (v: File[] | null) => {
+      if (!v) return true
+      return (
+        v.every(file => file.size <= 5 * 1024 * 1024) ||
+        'حجم الملف يجب أن لا يتجاوز 5 ميجا بايت'
+      )
+    },
+  ]
 
-const isImage = (file: File) => file.type.startsWith("image/");
+  const isImage = (file: File) => file.type.startsWith('image/')
 
-const updatePreviews = async (files: File[]) => {
-  const previews: { [key: string]: string } = {};
-  for (const file of files) {
-    if (isImage(file)) {
-      try {
-        const result = await readFileAsDataURL(file);
-        previews[file.name] = result;
-      } catch (error) {
-        console.error("Error reading file:", error);
+  const updatePreviews = async (files: File[]) => {
+    const previews: { [key: string]: string } = {}
+    for (const file of files) {
+      if (isImage(file)) {
+        try {
+          const result = await readFileAsDataURL(file)
+          previews[file.name] = result
+        } catch {
+          // silently fail
+        }
       }
     }
+    previewUrls.value = previews
   }
-  previewUrls.value = previews;
-};
 
-const readFileAsDataURL = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-};
+  const readFileAsDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
 
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (Array.isArray(newValue)) {
-      filesValue.value = newValue;
-      updatePreviews(newValue);
+  watch(
+    () => props.modelValue,
+    newValue => {
+      if (Array.isArray(newValue)) {
+        filesValue.value = newValue
+        updatePreviews(newValue)
+      } else {
+        filesValue.value = []
+        previewUrls.value = {}
+      }
+    },
+    { immediate: true }
+  )
+
+  const handleFileChange = async (event: File | File[]) => {
+    const files: File[] = Array.isArray(event) ? event : event ? [event] : []
+
+    if (props.multiple) {
+      const totalFiles = [...filesValue.value, ...files]
+      if (totalFiles.length > props.maxFiles) {
+        // Handle max files limit
+        return
+      }
+      filesValue.value = totalFiles
     } else {
-      filesValue.value = [];
-      previewUrls.value = {};
+      filesValue.value = files.slice(0, 1)
     }
-  },
-  { immediate: true }
-);
 
-const handleFileChange = async (event: Event | File[] | null) => {
-  let files: File[] = [];
-
-  if (event instanceof Event && event.target) {
-    const target = event.target as HTMLInputElement;
-    files = Array.from(target.files || []);
-  } else if (Array.isArray(event)) {
-    files = event;
+    await updatePreviews(filesValue.value)
+    emit('update:modelValue', filesValue.value)
+    emit('change', filesValue.value)
   }
 
-  if (props.multiple) {
-    const totalFiles = [...filesValue.value, ...files];
-    if (totalFiles.length > props.maxFiles) {
-      // Handle max files limit
-      return;
+  const removeFile = (index: number) => {
+    const newFiles = [...filesValue.value]
+    const removedFile = newFiles.splice(index, 1)[0]
+    filesValue.value = newFiles
+    delete previewUrls.value[removedFile.name]
+    emit('update:modelValue', newFiles)
+  }
+
+  const triggerFileInput = () => {
+    if (
+      (!props.multiple && filesValue.value.length === 0) ||
+      (props.multiple && filesValue.value.length < props.maxFiles)
+    ) {
+      fileInput.value?.$el.querySelector('input')?.click()
     }
-    filesValue.value = totalFiles;
-  } else {
-    filesValue.value = files.slice(0, 1);
   }
 
-  await updatePreviews(filesValue.value);
-  emit("update:modelValue", filesValue.value);
-  emit("change", filesValue.value);
-};
-
-const removeFile = (index: number) => {
-  const newFiles = [...filesValue.value];
-  const removedFile = newFiles.splice(index, 1)[0];
-  filesValue.value = newFiles;
-  delete previewUrls.value[removedFile.name];
-  emit("update:modelValue", newFiles);
-};
-
-const triggerFileInput = () => {
-  if (
-    (!props.multiple && filesValue.value.length === 0) ||
-    (props.multiple && filesValue.value.length < props.maxFiles)
-  ) {
-    fileInput.value?.$el.querySelector("input")?.click();
+  const formatFileSize = (bytes: number): string => {
+    if (!bytes || bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
   }
-};
-
-const formatFileSize = (bytes: number): string => {
-  if (!bytes || bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-};
 </script>
 
 <style scoped lang="scss">
@@ -370,7 +364,7 @@ const formatFileSize = (bytes: number): string => {
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #f5f5f5;
+      background-color: rgb(var(--v-theme-background));
       border-radius: 8px;
 
       &.circle-card {
@@ -444,7 +438,7 @@ const formatFileSize = (bytes: number): string => {
 
     .file-preview {
       width: 100%;
-      background-color: white;
+      background-color: rgb(var(--v-theme-surface));
       border-radius: 8px;
       border: 1px solid rgba(0, 0, 0, 0.12);
 

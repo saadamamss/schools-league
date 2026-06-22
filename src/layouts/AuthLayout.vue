@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Logo from "@/@core/components/icons/logo.vue";
+  import Logo from '@/@core/components/icons/logo.vue'
 </script>
 
 <template>
@@ -44,9 +44,7 @@ import Logo from "@/@core/components/icons/logo.vue";
         <div
           class="w-100 d-flex align-center justify-space-between pb-3 pt-6 px-4"
         >
-          <a href="https://maidan.events/">
-            <Logo />
-          </a>
+          <Logo />
         </div>
         <div class="content px-4">
           <RouterView />

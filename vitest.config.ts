@@ -1,7 +1,9 @@
+import Vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+  plugins: [Vue()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -14,5 +16,16 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    exclude: ['e2e/**', 'node_modules/**'],
+    server: {
+      deps: {
+        inline: ['vuetify'],
+      },
+    },
+    coverage: {
+      thresholds: {
+        statements: 60,
+      },
+    },
   },
 })

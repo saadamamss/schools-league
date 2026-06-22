@@ -1,15 +1,16 @@
 <template>
-  <router-link :to="link" class="text-decoration-none">
-    <v-card elevation="0" class="rounded-lg border border-grey-lighten-2 h-100">
+  <router-link class="text-decoration-none" :to="link">
+    <v-card class="rounded-lg border border-grey-lighten-2 h-100" elevation="0">
       <v-card-text class="pa-4">
         <div class="d-flex flex-column h-100">
           <!-- Header -->
           <div class="d-flex justify-space-between align-center mb-4">
             <div class="d-flex align-center">
               <v-avatar color="grey-lighten-4" size="48">
-                <v-icon color="primary" size="24"
-                  >mdi-clipboard-check-outline</v-icon
-                >
+                <v-icon
+                  color="primary"
+                  size="24"
+                >mdi-clipboard-check-outline</v-icon>
               </v-avatar>
               <div class="ms-3">
                 <h3 class="text-subtitle-1 font-weight-bold mb-1">
@@ -37,30 +38,28 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
-
-const props = defineProps({
-  siteId: {
-    type: [String, Number],
-    required: true,
-  },
-  authorizationNumber: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    default: "PENDING",
-  },
-  createdAt: {
-    type: String,
-    required: true,
-  },
-  link: {
-    type: String,
-    required: true,
-  },
-});
+  const props = defineProps({
+    siteId: {
+      type: [String, Number],
+      required: true,
+    },
+    authorizationNumber: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      default: 'PENDING',
+    },
+    createdAt: {
+      type: String,
+      required: true,
+    },
+    link: {
+      type: String,
+      required: true,
+    },
+  })
 </script>
 
 <style lang="scss" scoped>

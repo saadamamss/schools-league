@@ -6,7 +6,7 @@ export interface UserCity {
 export interface UserType {
   id: number
   code: string
-  name: { ar: string; en: string } | string
+  name: { ar: string; en: string }
   key: string
   is_active: boolean
 }
@@ -59,8 +59,8 @@ export interface RegisterData {
 
 export interface Location {
   id: number
-  site_name: string
-  site_type: string
+  name: string
+  type: string
   license?: string
   phone?: string
   address?: string
@@ -131,6 +131,9 @@ export interface Pagination {
   i_per_page: number
   i_total_objects: number
   i_current_page: number
+  iPerPage?: number
+  iTotalObjects?: number
+  iCurrentPage?: number
 }
 
 export interface ApiResponse<T> {
@@ -160,4 +163,81 @@ export interface Shift {
   end_time: string
   location_id: number
   is_active: boolean
+}
+
+export interface EmployeeBrief {
+  fullName: string
+  userType?: { name: { ar: string; en: string } }
+  city?: { name: { ar: string; en: string } }
+  monthlyWorkingHours: number
+  todayCheckIn?: string
+  todayCheckOut?: string
+}
+
+export interface LocationDetail {
+  name: string
+  type?: string
+  licenseNo?: string
+  phone?: string
+  address?: string
+  employeeNumber: number
+  observerNumber: number
+  observerCount: number
+  workHours: string
+  totalWorkingHours: number
+  maxUsers: number
+  latitude?: number
+  longitude?: number
+  image?: string
+  supervisor?: EmployeeBrief | null
+  inspectors: EmployeeBrief[]
+}
+
+export interface EventDetailData extends Location {
+  max_users?: number
+  supervisor?: User | null
+  inspectors?: User[]
+}
+
+export interface FinancialTransaction {
+  id: number
+  transactionDate: string
+  type: 'payment' | 'deduction'
+  amount: number
+  paymentType?: { name: string }
+  deductionBasis?: string
+  deductionValue?: string
+  description?: string
+}
+
+export interface BankInfo {
+  bankName: string
+  accountNumber: string
+  iban: string
+  swiftCode: string
+}
+
+export interface UserWithBankInfo extends User {
+  bankInfo?: BankInfo
+  location?: Location & { assignedAt?: string; unassignedAt?: string; totalWorkingHours?: number }
+  todayAttendanceStatus?: string
+  todayCheckIn?: string
+  dailyRate?: number
+  birthDate?: string
+  fullName?: string
+}
+
+export interface AttendanceGroupItem {
+  date: string
+  checkIn: string
+  checkOut: string | null
+  totalHours: number
+  location?: {
+    name: string
+    image?: string
+  }
+}
+
+export interface UserWithLocation extends User {
+  locations: Location[]
 }

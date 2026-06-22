@@ -1,3 +1,5 @@
+@import './pages-shared';
+
 // Write your overrides
 ::-webkit-scrollbar {
   width: 5px;
@@ -77,7 +79,7 @@
 }
 
 .bg-white {
-  background-color: #fff !important;
+  background-color: rgb(var(--v-theme-surface)) !important;
 }
 .v-table .v-data-table__th span {
   font-weight: 400;
@@ -138,8 +140,8 @@
     align-items: center;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
-    background: #fff;
-    border: 1px solid #e4e7eb;
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid rgb(var(--v-theme-outline));
     border-radius: 4px;
     cursor: move;
     max-width: 240px;
@@ -151,17 +153,17 @@
   }
 
   .drag {
-    background: #f8f9fa;
+    background: rgb(var(--v-theme-surface-variant));
   }
 }
 .v-selection-control__input {
   .v-selection-control__input::before {
     border: 1px solid #e4e7eb !important;
-    background-color: #fff !important;
+    background-color: rgb(var(--v-theme-surface)) !important;
   }
 }
 .table-side-filter .v-selection-control__input::before {
-  background-color: #fff !important;
+  background-color: rgb(var(--v-theme-surface)) !important;
 }
 .text-primary {
   .v-selection-control__input::before {
@@ -177,7 +179,7 @@
     max-width: 100%;
     height: 100%;
     border-radius: 8px;
-    background-color: #fff;
+    background-color: rgb(var(--v-theme-surface));
     z-index: 999999;
     border: 1px solid #e4e7eb;
     border-inline-start: 0px solid #e4e7eb;
@@ -278,7 +280,7 @@ body {
 
   .auth-wrapper {
     background-size: cover;
-    background-color: #fff !important;
+    background-color: rgb(var(--v-theme-background)) !important;
     overflow: hidden;
     .content {
       position: relative;
@@ -288,7 +290,7 @@ body {
       position: absolute;
       width: 100%;
       height: 200vh;
-      background-color: #f8f9f9;
+      background-color: rgb(var(--v-theme-background));
       border-radius: 50%;
       top: -105vh;
       z-index: 1;
@@ -307,15 +309,14 @@ body {
 }
 
 .bg-gray {
-  // background-color: rgba(247, 247, 248, 1) !important;
-  background-color: red;
+  background-color: rgb(var(--v-theme-background)) !important;
 }
 
 .icon-container {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: rgba(249, 249, 249, 1);
+  background-color: rgb(var(--v-theme-surface));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -338,9 +339,139 @@ body {
   width: 100%; /* Or any fixed width */
 }
 
-// Import Safari chart fixes
-@import "./safari-chart-fixes.scss";
+// ──────────────────────────────────────────
+// Moved from App.vue (global utility classes)
+// ──────────────────────────────────────────
 
-.apexcharts-tex.apexcharts-xaxis-label {
-  transform: rotateX(90deg);
+body pre {
+  font-family: "IBMPlexArabic", Tahoma, sans-serif;
+  line-height: 2;
 }
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.25s ease-out;
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.custom-panel .v-expansion-panel {
+  background-color: rgb(var(--v-theme-surface-variant)) !important;
+}
+
+.custom-panel .v-expansion-panel:not(:first-child)::after {
+  border: none;
+}
+
+.custom-panel.v-expansion-panels--variant-accordion > .v-expansion-panel {
+  border-radius: 1rem !important;
+}
+
+.v-select.custom-select,
+.v-autocomplete.custom-select,
+.v-input.v-filter-input {
+  &.v-input--density-default .v-field--variant-filled {
+    --v-input-control-height: 22px;
+    --v-field-padding-bottom: 4px;
+  }
+
+  .v-field--variant-filled .v-field__outline::before,
+  .v-field--variant-underlined .v-field__outline::before {
+    border-width: 0;
+  }
+
+  .v-field__append-inner > .v-icon {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+  }
+
+  .v-field__input {
+    padding: 12px 10px;
+  }
+
+  .v-field .v-field__input > input {
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+  }
+
+  .v-select__selection-text {
+    font-size: 0.9rem;
+    color: rgb(var(--v-theme-on-surface));
+  }
+}
+
+body .v-btn--variant-outlined {
+  border-color: rgb(var(--v-theme-outline));
+}
+
+.text-subtitle-2,
+.whitespace-wrap {
+  white-space: normal !important;
+}
+
+.v-input--density-compact .v-field--variant-filled {
+  --v-input-control-height: 48px;
+  --v-field-padding-bottom: 0px;
+}
+
+.responsive-text {
+  font-size: 0.7rem;
+
+  @media (min-width: 1024px) {
+    font-size: 1rem;
+  }
+}
+
+.v-field__input[type="date"] {
+  display: table !important;
+}
+
+body .v-card {
+  overflow: initial !important;
+}
+
+body .v-date-picker-month__day--selected .v-btn {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+table tr td,
+table tr th {
+  white-space: nowrap;
+}
+
+.v-btn--size-small {
+  height: 40px !important;
+}
+
+.v-slide-group__container {
+  align-items: center;
+}
+
+.v-application {
+  background-color: rgb(var(--v-theme-background)) !important;
+}
+

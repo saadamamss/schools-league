@@ -327,24 +327,4 @@ body {
   .vue-highcharts text {
     font-family: "IBMPlexArabic", Tahoma, sans-serif;
   }
-
-  .apexcharts-legend-series {
-    flex-flow: row-reverse;
-    gap: 0.25rem;
-  }
-
-  .apexcharts-tooltip-text-y-value {
-    direction: rtl;
-  }
-
-  .apexcharts-tooltip-series-group {
-    display: flex;
-    justify-content: start;
-    gap: 5px;
-  }
-
-  .apexcharts-tooltip {
-    direction: rtl;
-    text-align: right;
-  }
 }

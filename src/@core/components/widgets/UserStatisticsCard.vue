@@ -1,12 +1,18 @@
-<script setup>
-defineProps({
-  title: "",
-  number: 0,
-});
+<script setup lang="ts">
+  defineProps({
+    title: {
+      type: String,
+      default: '',
+    },
+    number: {
+      type: Number,
+      default: 0,
+    },
+  })
 </script>
 
 <template>
-  <VCard elevation="0" class="rounded-lg">
+  <VCard class="rounded-lg" elevation="0">
     <v-card-text class="px-1 py-0 pb-0">
       <div class="d-flex flex-column gap- pa-4">
         <div class="d-flex justify-space-between align-center">

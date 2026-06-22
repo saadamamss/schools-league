@@ -21,7 +21,11 @@
   #{$component} {
     background-color: rgb(var(--v-theme-background));
     box-shadow: none !important;
-    #{$border-property}: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) if($important, !important, null);
+    @if $important {
+      #{$border-property}: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+    } @else {
+      #{$border-property}: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    }
   }
 }
 

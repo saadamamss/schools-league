@@ -5,7 +5,7 @@
         <h1 class="mb-4">الصفحة المطلوبة غير موجودة :(</h1>
         <p>We couldn't find the page you are looking for.</p>
       </div>
-      <VBtn to="/" rounded="lg" class="mb-12"> العودة إلى الرئيسية </VBtn>
+      <VBtn class="mb-12" rounded="lg" to="/"> العودة إلى الرئيسية </VBtn>
     </div>
   </div>
 </template>

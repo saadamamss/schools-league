@@ -1,24 +1,29 @@
 <template>
   <vue-tel-input
     v-model="phone"
-    :preferredCountries="['sa', 'us', 'gb']"
-    @onInput="onInput"
-  ></vue-tel-input>
+    :preferred-countries="['sa', 'us', 'gb']"
+    @on-input="onInput"
+  />
 </template>
 
-<script setup>
-import VueTelInput from "vue-tel-input";
-import "vue-tel-input/vue-tel-input.css";
+<script setup lang="ts">
+  import VueTelInput from 'vue-tel-input'
+  import 'vue-tel-input/vue-tel-input.css'
 
-const phone = ref("");
-const phoneObject = ref(null);
+  const phone = ref('')
+  const phoneObject = ref<{
+    formattedNumber: string
+    number: string
+    valid: boolean
+    country: Record<string, any>
+  } | null>(null)
 
-function onInput(formattedNumber, { number, valid, country }) {
-  phoneObject.value = {
-    formattedNumber,
-    number,
-    valid,
-    country,
-  };
-}
+  function onInput (formattedNumber: string, { number, valid, country }: { number: string; valid: boolean; country: Record<string, any> }) {
+    phoneObject.value = {
+      formattedNumber,
+      number,
+      valid,
+      country,
+    }
+  }
 </script>

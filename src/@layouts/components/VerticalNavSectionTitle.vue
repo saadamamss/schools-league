@@ -1,18 +1,16 @@
-<script setup>
-import { useLayouts } from '@layouts'
-import { config } from '@layouts/config'
-import { can } from '@layouts/plugins/casl'
+<script setup lang="ts">
+  import { useLayouts } from '@layouts'
+  import { config as configRaw } from '@layouts/config'
+  import { can } from '@layouts/plugins/casl'
+  const config = configRaw as any
 
-const props = defineProps({
-  item: {
-    type: null,
-    required: true,
-  },
-})
+  const props = defineProps<{
+    item: Record<string, any>
+  }>()
 
-const { isVerticalNavMini, dynamicI18nProps } = useLayouts()
-const { width: windowWidth } = useWindowSize()
-const shallRenderIcon = isVerticalNavMini(windowWidth)
+  const { isVerticalNavMini, dynamicI18nProps } = useLayouts()
+  const { width: windowWidth } = useWindowSize()
+  const shallRenderIcon = isVerticalNavMini(windowWidth.value)
 </script>
 
 <template>
@@ -22,8 +20,8 @@ const shallRenderIcon = isVerticalNavMini(windowWidth)
   >
     <div class="title-wrapper">
       <Transition
-        name="vertical-nav-section-title"
         mode="out-in"
+        name="vertical-nav-section-title"
       >
         <!-- eslint-disable vue/no-v-text-v-html-on-component -->
         <Component

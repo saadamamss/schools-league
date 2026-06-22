@@ -67,7 +67,7 @@ $alert-prepend-icon-font-size: 1.125rem !important;
     z-index: 1;
     padding: 0.25rem;
     border-radius: 0.375rem;
-    background-color: #fff;
+    background-color: rgb(var(--v-theme-surface));
 
     .v-icon {
       block-size: $alert-prepend-icon-font-size;

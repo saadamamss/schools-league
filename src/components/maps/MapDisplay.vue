@@ -1,153 +1,103 @@
 <template>
-  <div class="map-container" :style="{ height: height }">
-    <div ref="mapRef" style="width: 100%; height: 100%"></div>
-    <div v-if="isLoading" class="map-loading">
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
-      <p class="mt-2">جاري تحميل الخريطة...</p>
-    </div>
-    <div v-if="loadingError" class="map-error">
-      <p>{{ loadingError }}</p>
-    </div>
+  <div
+    ref="mapContainer"
+    class="map-container"
+    :style="{ height }"
+  />
+  <div v-if="!hasValidCoords" class="map-empty">
+    <p>الإحداثيات غير متوفرة</p>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, watch } from "vue";
-import { loadGoogleMapsScript } from "@/plugins/google-maps";
+<script setup lang="ts">
+  import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+  import L from 'leaflet'
+  import 'leaflet/dist/leaflet.css'
 
-const props = defineProps({
-  latitude: {
-    type: [Number, String],
-    required: true,
-  },
-  longitude: {
-    type: [Number, String],
-    required: true,
-  },
-  height: {
-    type: String,
-    default: "400px",
-  },
-  zoom: {
-    type: Number,
-    default: 15,
-  },
-  readonly: {
-    type: Boolean,
-    default: false,
-  },
-});
+  const markerIcon = L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">
+      <path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0Z" fill="#1976D2"/>
+      <circle cx="12.5" cy="12.5" r="5" fill="white"/>
+    </svg>`,
+    className: '',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  })
 
-const emit = defineEmits(["update:latitude", "update:longitude", "error"]);
+  const props = defineProps({
+    latitude: {
+      type: [Number, String],
+      required: true,
+    },
+    longitude: {
+      type: [Number, String],
+      required: true,
+    },
+    height: {
+      type: String,
+      default: '400px',
+    },
+    zoom: {
+      type: Number,
+      default: 15,
+    },
+    readonly: {
+      type: Boolean,
+      default: true,
+    },
+  })
 
-const mapRef = ref(null);
-const loadingError = ref(null);
-const isLoading = ref(true);
-let map = null;
-let marker = null;
+  const mapContainer = ref<HTMLDivElement | null>(null)
+  let mapInstance: L.Map | null = null
 
-const initMap = () => {
-  try {
-    const lat =
-      typeof props.latitude === "string"
-        ? parseFloat(props.latitude)
-        : props.latitude;
-    const lng =
-      typeof props.longitude === "string"
-        ? parseFloat(props.longitude)
-        : props.longitude;
+  const lat = computed(() => {
+    const v = typeof props.latitude === 'string' ? parseFloat(props.latitude) : props.latitude
+    return isNaN(v) ? null : v
+  })
+  const lng = computed(() => {
+    const v = typeof props.longitude === 'string' ? parseFloat(props.longitude) : props.longitude
+    return isNaN(v) ? null : v
+  })
+  const hasValidCoords = computed(() => lat.value !== null && lng.value !== null)
 
-    // Check for valid coordinates
-    if (isNaN(lat) || isNaN(lng) || !isFinite(lat) || !isFinite(lng)) {
-      throw new Error("Invalid coordinates");
-    }
-
-    const position = { lat, lng };
-
-    map = new google.maps.Map(mapRef.value, {
-      center: position,
+  function initMap () {
+    if (!mapContainer.value || !hasValidCoords.value) return
+    mapInstance = L.map(mapContainer.value, {
+      center: [lat.value!, lng.value!],
       zoom: props.zoom,
-      streetViewControl: false,
-      mapTypeControl: false,
-    });
+      zoomControl: !props.readonly,
+      dragging: !props.readonly,
+      scrollWheelZoom: !props.readonly,
+      doubleClickZoom: !props.readonly,
+      touchZoom: !props.readonly,
+      keyboard: !props.readonly,
+    })
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(mapInstance)
+    L.marker([lat.value!, lng.value!], { icon: markerIcon }).addTo(mapInstance)
+  }
 
-    marker = new google.maps.Marker({
-      position,
-      map,
-      animation: google.maps.Animation.DROP,
-      draggable: !props.readonly,
-    });
-
-    if (!props.readonly) {
-      // Handle map clicks
-      map.addListener("click", (e) => {
-        const newPosition = {
-          lat: e.latLng.lat(),
-          lng: e.latLng.lng(),
-        };
-        marker.setPosition(newPosition);
-        emit("update:latitude", newPosition.lat);
-        emit("update:longitude", newPosition.lng);
-      });
-
-      // Handle marker drag
-      marker.addListener("dragend", () => {
-        const position = marker.getPosition();
-        emit("update:latitude", position.lat());
-        emit("update:longitude", position.lng());
-      });
+  function destroyMap () {
+    if (mapInstance) {
+      mapInstance.remove()
+      mapInstance = null
     }
-  } catch (error) {
-    console.error("Error initializing map:", error);
-    loadingError.value = "Could not initialize map. Please try again.";
-    emit("error", error);
   }
-};
 
-const updateMarkerPosition = () => {
-  if (!map || !marker) return;
+  onMounted(() => {
+    initMap()
+  })
 
-  const lat =
-    typeof props.latitude === "string"
-      ? parseFloat(props.latitude)
-      : props.latitude;
-  const lng =
-    typeof props.longitude === "string"
-      ? parseFloat(props.longitude)
-      : props.longitude;
+  onUnmounted(() => {
+    destroyMap()
+  })
 
-  const position = { lat, lng };
-  marker.setPosition(position);
-  map.setCenter(position);
-};
-
-watch(
-  () => [props.latitude, props.longitude],
-  () => {
-    updateMarkerPosition();
-  }
-);
-
-onMounted(async () => {
-  try {
-    isLoading.value = true;
-    await loadGoogleMapsScript();
-    if (window.google && window.google.maps) {
-      initMap();
-      isLoading.value = false;
-    } else {
-      isLoading.value = false;
-      loadingError.value =
-        "Google Maps could not be loaded. Please check your internet connection.";
-      emit("error", new Error("Google Maps not loaded"));
-    }
-  } catch (error) {
-    isLoading.value = false;
-    console.error("Error loading Google Maps:", error);
-    loadingError.value = "Error loading Google Maps. Please try again later.";
-    emit("error", error);
-  }
-});
+  watch([lat, lng], () => {
+    destroyMap()
+    initMap()
+  })
 </script>
 
 <style scoped>
@@ -156,34 +106,13 @@ onMounted(async () => {
   border-radius: 8px;
   overflow: hidden;
   position: relative;
+  z-index: 0;
 }
-
-.map-error {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(245, 245, 245, 0.9);
-  color: #d32f2f;
-  text-align: center;
+.map-empty {
   padding: 20px;
-}
-
-.map-loading {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 1;
+  text-align: center;
+  color: #999;
+  background: #f5f5f5;
+  border-radius: 8px;
 }
 </style>

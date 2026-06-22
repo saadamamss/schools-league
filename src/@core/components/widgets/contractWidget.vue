@@ -1,79 +1,54 @@
-<script setup>
-import { computed, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
+<script setup lang="ts">
+  import { computed, onMounted, watch } from 'vue'
+  import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const props = defineProps({
-  id: {
-    type: [Number, String],
-    required: true,
-  },
-  title: {
-    type: String,
-    default: "",
-  },
-  locations_count: {
-    type: Number,
-    default: 0,
-  },
-});
+  const router = useRouter()
+  const props = defineProps({
+    id: {
+      type: [Number, String],
+      required: true,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    locations_count: {
+      type: Number,
+      default: 0,
+    },
+  })
 
-// Debug watcher for props
-watch(
-  () => props,
-  (newProps) => {
-    console.log("Contract Widget Props:", {
-      id: newProps.id,
-      title: newProps.title,
-      created_at: newProps.created_at,
-      updated_at: newProps.updated_at,
-    });
-  },
-  { immediate: true, deep: true }
-);
-
-// Debug on mount
-onMounted(() => {
-  console.log("Contract Widget Mounted with props:", props);
-});
-
-const handleClick = () => {
-  router.push(`/contracts/${props.id}`);
-};
-
-const formatDate = (date) => {
-  if (!date) {
-    console.log("No date provided");
-    return "";
+  const handleClick = () => {
+    router.push(`/contracts/${props.id}`)
   }
-  try {
-    console.log("Formatting date:", date);
-    const dateObj = new Date(date);
-    // First check if it's a valid date
-    if (isNaN(dateObj.getTime())) {
-      console.log("Invalid date:", date);
-      return date;
+
+  const formatDate = (date: string) => {
+    if (!date) {
+      return ''
     }
+    try {
+      const dateObj = new Date(date)
+      if (isNaN(dateObj.getTime())) {
+        return date
+      }
 
-    // Format date in Arabic with Gregorian calendar
-    const formatter = new Intl.DateTimeFormat("ar", {
-      calendar: "gregory",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
+      // Format date in Arabic with Gregorian calendar
+      const formatter = new Intl.DateTimeFormat('ar', {
+        calendar: 'gregory',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      })
 
-    const formattedDate = formatter.format(dateObj);
-    console.log("Formatted date:", formattedDate);
-    return formattedDate;
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return date;
+      return formatter.format(dateObj)
+    } catch {
+      return date
+    }
   }
-};
 </script>
 
 <template>
@@ -89,22 +64,21 @@ const formatDate = (date) => {
           <span
             class="text-lg text-black font-weight-medium text-truncate d-inline-block"
             style="max-width: 100%"
-            >{{ title }}</span
-          >
+          >{{ title }}</span>
         </div>
         <v-btn
-          size="small"
-          elevation="0"
           class="btn-card-link px-3 text-primary rounded-xl"
+          elevation="0"
+          size="small"
           @click.stop="handleClick"
         >
           <span class="font-weight-bold">عرض</span>
           <svg
-            style="rotate: 180deg"
-            width="1.1rem"
-            height="1.1rem"
-            viewBox="0 0 16 16"
             fill="none"
+            height="1.1rem"
+            style="rotate: 180deg"
+            viewBox="0 0 16 16"
+            width="1.1rem"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -117,16 +91,16 @@ const formatDate = (date) => {
 
       <div class="d-flex align-start ga-2">
         <svg
-          width="14"
+          fill="none"
           height="16"
           viewBox="0 0 14 16"
-          fill="none"
+          width="14"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            opacity="0.4"
             d="M1.88216 0.924465C2.20066 0.854497 2.57551 0.833008 3 0.833008L7 0.833008C7.42449 0.833008 7.79934 0.854497 8.11785 0.924465C8.44201 0.995678 8.73885 1.12375 8.97405 1.35895C9.20926 1.59416 9.33733 1.891 9.40854 2.21516C9.47851 2.53366 9.5 2.90852 9.5 3.33301L9.5 14.6663C9.5 14.9425 9.27614 15.1663 9 15.1663L1 15.1663C0.723858 15.1663 0.5 14.9425 0.5 14.6663L0.5 3.33301C0.5 2.90852 0.521489 2.53366 0.591458 2.21516C0.66267 1.891 0.790744 1.59416 1.02595 1.35895C1.26115 1.12375 1.55799 0.995678 1.88216 0.924465Z"
             fill="#B69265"
+            opacity="0.4"
           />
           <path
             d="M3.86821 10.1946C4.08341 10.1656 4.34797 10.1657 4.63651 10.1657H5.36284C5.65139 10.1657 5.91594 10.1656 6.13115 10.1946C6.36814 10.2264 6.61862 10.3014 6.82464 10.5074C7.03065 10.7134 7.10562 10.9639 7.13748 11.2009C7.16641 11.4161 7.16638 11.6807 7.16635 11.9692L7.16635 15.1657L6.16635 15.1657L6.16635 11.999C6.16635 11.6706 6.16528 11.4746 6.1464 11.3341C6.13108 11.2202 6.11215 11.201 5.9979 11.1856C5.85742 11.1668 5.66142 11.1657 5.33301 11.1657H4.66635C4.33794 11.1657 4.14194 11.1668 4.00146 11.1856C3.8826 11.2016 3.86859 11.2179 3.85296 11.3341C3.83407 11.4746 3.83301 11.6706 3.83301 11.999L3.83301 15.1657H2.83301L2.83301 11.9692C2.83298 11.6807 2.83294 11.4161 2.86188 11.2009C2.89374 10.9639 2.96871 10.7134 3.17472 10.5074C3.38074 10.3014 3.63122 10.2264 3.86821 10.1946Z"

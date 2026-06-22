@@ -1,6 +1,6 @@
 <template>
   <VContainer v-if="hasError" class="text-center py-10">
-    <VAlert type="error" variant="tonal" class="mx-auto" max-width="500">
+    <VAlert class="mx-auto" max-width="500" type="error" variant="tonal">
       <template #title>حدث خطأ</template>
       {{ errorMessage }}
     </VAlert>
@@ -9,21 +9,22 @@
   <slot v-else />
 </template>
 
-<script setup>
-import { ref, onErrorCaptured } from 'vue'
+<script setup lang="ts">
+  import { onErrorCaptured, ref } from 'vue'
 
-const props = defineProps({
-  errorMessage: { type: String, default: 'حدث خطأ غير متوقع' },
-})
+  const props = defineProps({
+    errorMessage: { type: String, default: 'حدث خطأ غير متوقع' },
+  })
 
-const hasError = ref(false)
+  const hasError = ref(false)
 
-onErrorCaptured(() => {
-  hasError.value = true
-  return false
-})
+  onErrorCaptured(err => {
+    console.error('ErrorBoundary caught:', err)
+    hasError.value = true
+    return false
+  })
 
-const recover = () => {
-  hasError.value = false
-}
+  const recover = () => {
+    hasError.value = false
+  }
 </script>

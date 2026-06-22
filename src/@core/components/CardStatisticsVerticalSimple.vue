@@ -1,23 +1,23 @@
-<script setup>
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-    required: false,
-    default: 'primary',
-  },
-  icon: {
-    type: String,
-    required: true,
-  },
-  stats: {
-    type: String,
-    required: true,
-  },
-})
+<script setup lang="ts">
+  const props = defineProps({
+    title: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      required: false,
+      default: 'primary',
+    },
+    icon: {
+      type: String,
+      required: true,
+    },
+    stats: {
+      type: String,
+      required: true,
+    },
+  })
 </script>
 
 <template>
@@ -25,9 +25,9 @@ const props = defineProps({
     <VCardText class="d-flex flex-column align-center justify-center">
       <VAvatar
         v-if="props.icon"
+        :color="props.color"
         size="42"
         variant="tonal"
-        :color="props.color"
       >
         <VIcon
           :icon="props.icon"

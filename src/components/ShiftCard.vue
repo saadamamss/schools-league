@@ -6,10 +6,10 @@
         <div class="d-flex align-center">
           <div class="rounded-circle bg-primary-lighten-4 p-2 me-3">
             <svg
-              width="1.5rem"
+              fill="none"
               height="1.5rem"
               viewBox="0 0 24 24"
-              fill="none"
+              width="1.5rem"
               xmlns="http://www.w3.org/2000/svg"
             >
               <circle
@@ -22,16 +22,16 @@
               <polyline
                 points="12 6 12 12 16 14"
                 stroke="#667178"
-                stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                stroke-width="2"
               />
             </svg>
           </div>
           <div>
             <h3 class="text-h6 mb-1">{{ shift.name }}</h3>
             <p class="text-body-2 text-medium-emphasis mb-0">
-              {{ shift.start_time }} - {{ shift.end_time }}
+              {{ shift.startTime }} - {{ shift.endTime }}
             </p>
           </div>
         </div>
@@ -39,23 +39,23 @@
         <!-- Actions -->
         <div class="d-flex align-center ga-2">
           <VBtn
-            icon
-            variant="text"
-            size="small"
             color="primary"
+            icon
+            size="small"
+            variant="text"
             @click="$emit('edit', shift)"
           >
-            <VIcon size="22" icon="tabler-edit" />
+            <VIcon icon="mdi-pencil-outline" size="22" />
           </VBtn>
 
           <VBtn
-            icon
-            variant="text"
-            size="small"
             color="error"
+            icon
+            size="small"
+            variant="text"
             @click="$emit('delete', shift.id)"
           >
-            <VIcon size="22" icon="tabler-trash" />
+            <VIcon icon="mdi-delete" size="22" />
           </VBtn>
         </div>
       </div>
@@ -63,15 +63,15 @@
   </VCard>
 </template>
 
-<script setup>
-defineProps({
-  shift: {
-    type: Object,
-    required: true,
-  },
-});
+<script setup lang="ts">
+  defineProps({
+    shift: {
+      type: Object,
+      required: true,
+    },
+  })
 
-defineEmits(["edit", "delete"]);
+  defineEmits(['edit', 'delete'])
 </script>
 
 <style lang="scss" scoped>

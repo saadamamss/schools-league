@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="0" class="rate-card rounded-lg">
+  <v-card class="rate-card rounded-lg" elevation="0">
     <v-card-text class="pa-4" @click="router.push('/rating_details')">
       <div class="d-flex justify-space-between align-center mb-4">
         <div class=" ">
@@ -11,8 +11,8 @@
         <div class="d-flex align-center justify-space-between">
           <div class="text-body-2 text-medium-emphasis">
             <div
-              class="text-body-2 font-weight-medium py-1 text-center px-2 rounded-pill"
               key=""
+              class="text-body-2 font-weight-medium py-1 text-center px-2 rounded-pill"
               :style="{
                 backgroundColor:
                   status === 'مرفوض'
@@ -30,28 +30,28 @@
         </div>
       </div>
 
-      <user-widget noPadding noShadow :user="user" />
+      <user-widget no-padding no-shadow :user="user" />
 
       <div class="company-info mt-6 d-flex align-center justify-space-between">
         <div class="d-flex justify-space-between align-center">
           <div class="d-flex align-start ga-2">
             <svg
-              width="16"
+              fill="none"
               height="18"
               viewBox="0 0 16 18"
-              fill="none"
+              width="16"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                opacity="0.4"
                 d="M7.99967 2.83337C4.06316 2.83337 0.833008 5.8923 0.833008 9.71119C0.833008 11.543 1.57948 13.2044 2.78935 14.4329C2.96785 14.6142 3.02592 14.8 3.00026 14.9368C2.90543 15.4343 2.69099 15.8963 2.37912 16.2799C2.26784 16.4168 2.23692 16.6022 2.29776 16.7678C2.35861 16.9334 2.50221 17.0547 2.67565 17.0869C3.7497 17.2867 4.86329 17.1067 5.81776 16.5991C5.97346 16.5163 6.07516 16.4623 6.15151 16.4261C6.17255 16.4146 6.22856 16.3939 6.28432 16.4024C6.35907 16.4127 6.45954 16.4314 6.61766 16.4611C7.07324 16.5466 7.53576 16.5895 7.99967 16.589C11.9362 16.589 15.1663 13.5301 15.1663 9.71119C15.1663 5.8923 11.9362 2.83337 7.99967 2.83337Z"
                 fill="#667178"
+                opacity="0.4"
               />
               <path
-                fill-rule="evenodd"
                 clip-rule="evenodd"
                 d="M8 7.66683C7.54852 7.66683 7.33333 7.97125 7.33333 8.17232C7.33333 8.54051 7.03486 8.83899 6.66667 8.83899C6.29848 8.83899 6 8.54051 6 8.17232C6 7.07866 6.97872 6.3335 8 6.3335C9.02128 6.3335 10 7.07866 10 8.17232C10 8.55767 9.871 8.91129 9.66003 9.19951C9.53675 9.36794 9.39465 9.5261 9.27042 9.66183C9.24692 9.6875 9.22408 9.71236 9.20183 9.73658C9.09891 9.84858 9.00875 9.94669 8.92519 10.0477C8.71109 10.3063 8.66667 10.441 8.66667 10.5166V10.8097C8.66667 11.1779 8.36819 11.4764 8 11.4764C7.63181 11.4764 7.33333 11.1779 7.33333 10.8097V10.5166C7.33333 9.94496 7.65071 9.49634 7.89803 9.19752C8.00583 9.06728 8.12419 8.93859 8.22757 8.82618C8.24799 8.80398 8.26782 8.78242 8.28687 8.7616C8.41039 8.62665 8.50816 8.51577 8.58412 8.412C8.64055 8.3349 8.66667 8.25368 8.66667 8.17232C8.66667 7.97125 8.45148 7.66683 8 7.66683ZM7.33333 13.0002C7.33333 12.632 7.63181 12.3335 8 12.3335H8.00798C8.37617 12.3335 8.67465 12.632 8.67465 13.0002C8.67465 13.3684 8.37617 13.6668 8.00798 13.6668H8C7.63181 13.6668 7.33333 13.3684 7.33333 13.0002Z"
                 fill="#667178"
+                fill-rule="evenodd"
               />
             </svg>
 
@@ -67,16 +67,16 @@
         <div class="d-flex justify-space-between align-center">
           <div class="d-flex align-start ga-2">
             <svg
-              width="17"
+              fill="none"
               height="18"
               viewBox="0 0 17 18"
-              fill="none"
+              width="17"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                opacity="0.4"
                 d="M15.555 9.71119C15.555 13.2333 12.5698 16.089 8.88835 16.089C8.45547 16.0895 8.02384 16.0495 7.59862 15.9697C7.29256 15.9122 7.13953 15.8835 7.0327 15.8998C6.92586 15.9161 6.77447 15.9966 6.47167 16.1576C5.6151 16.6132 4.61631 16.774 3.65575 16.5954C4.02084 16.1463 4.27018 15.6075 4.3802 15.0299C4.44686 14.6766 4.28168 14.3334 4.03427 14.0821C2.91057 12.9411 2.22168 11.4034 2.22168 9.71119C2.22168 6.18909 5.20687 3.33337 8.88835 3.33337C12.5698 3.33337 15.555 6.18909 15.555 9.71119Z"
                 fill="#667178"
+                opacity="0.4"
               />
               <path
                 d="M11.2015 2.97982C11.3967 2.78456 11.7133 2.78456 11.9086 2.97982L13.555 4.62627L15.2015 2.97982C15.3967 2.78456 15.7133 2.78456 15.9086 2.97982C16.1038 3.17508 16.1038 3.49167 15.9086 3.68693L14.2621 5.33337L15.9086 6.97982C16.1038 7.17508 16.1038 7.49167 15.9086 7.68693C15.7133 7.88219 15.3967 7.88219 15.2015 7.68693L13.555 6.04048L11.9086 7.68693C11.7133 7.88219 11.3967 7.88219 11.2015 7.68693C11.0062 7.49166 11.0062 7.17508 11.2015 6.97982L12.8479 5.33337L11.2015 3.68693C11.0062 3.49167 11.0062 3.17508 11.2015 2.97982Z"
@@ -112,16 +112,16 @@
         <div class="d-flex justify-space-between align-center">
           <div class="d-flex align-start ga-2">
             <svg
-              width="17"
+              fill="none"
               height="18"
               viewBox="0 0 17 18"
-              fill="none"
+              width="17"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                opacity="0.4"
                 d="M15.555 9.71119C15.555 13.2333 12.5698 16.089 8.88835 16.089C8.45547 16.0895 8.02384 16.0495 7.59862 15.9697C7.29256 15.9122 7.13953 15.8835 7.0327 15.8998C6.92586 15.9161 6.77447 15.9966 6.47167 16.1576C5.6151 16.6132 4.61631 16.774 3.65575 16.5954C4.02084 16.1463 4.27018 15.6075 4.3802 15.0299C4.44686 14.6766 4.28168 14.3334 4.03427 14.0821C2.91057 12.9411 2.22168 11.4034 2.22168 9.71119C2.22168 6.18909 5.20687 3.33337 8.88835 3.33337C12.5698 3.33337 15.555 6.18909 15.555 9.71119Z"
                 fill="#667178"
+                opacity="0.4"
               />
               <path
                 d="M11.2015 2.97982C11.3967 2.78456 11.7133 2.78456 11.9086 2.97982L13.555 4.62627L15.2015 2.97982C15.3967 2.78456 15.7133 2.78456 15.9086 2.97982C16.1038 3.17508 16.1038 3.49167 15.9086 3.68693L14.2621 5.33337L15.9086 6.97982C16.1038 7.17508 16.1038 7.49167 15.9086 7.68693C15.7133 7.88219 15.3967 7.88219 15.2015 7.68693L13.555 6.04048L11.9086 7.68693C11.7133 7.88219 11.3967 7.88219 11.2015 7.68693C11.0062 7.49166 11.0062 7.17508 11.2015 6.97982L12.8479 5.33337L11.2015 3.68693C11.0062 3.49167 11.0062 3.17508 11.2015 2.97982Z"
@@ -159,34 +159,34 @@
   </v-card>
 </template>
 
-<script setup>
-import { ref } from "vue";
-import UserWidget from "@/@core/components/widgets/UserWidget.vue";
-import { useRouter } from "vue-router";
+<script setup lang="ts">
+  import { ref } from 'vue'
+  import UserWidget from '@/@core/components/widgets/UserWidget.vue'
+  import { useRouter } from 'vue-router'
 
-const router = useRouter();
+  const router = useRouter()
 
-defineProps({
-  siteId: {
-    type: String,
-    required: true,
-  },
-  authorizationNumber: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    required: true,
-  },
-});
+  defineProps({
+    siteId: {
+      type: String,
+      required: true,
+    },
+    authorizationNumber: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+    },
+  })
 
-const user = ref({
-  name: "محمد أحمد",
-});
+  const user = ref({
+    name: 'محمد أحمد',
+  })
 
-const dialog = ref(false);
-const loading = ref(false);
+  const dialog = ref(false)
+  const loading = ref(false)
 </script>
 
 <style lang="scss" scoped>
@@ -209,18 +209,18 @@ const loading = ref(false);
 
   .company-info {
     padding-top: 10px;
-    border-top: 1px solid rgba(249, 249, 249, 1);
+    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
   }
 }
 
 .location-dialog {
   :deep(.v-card) {
-    background-color: white;
+    background-color: rgb(var(--v-theme-surface));
   }
 
   :deep(.v-field) {
     border-radius: 8px;
-    background-color: rgb(250, 250, 250);
+    background-color: rgb(var(--v-theme-background));
   }
 
   :deep(.v-btn) {

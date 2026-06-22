@@ -5,7 +5,7 @@ const mountSitesWidgets = (props = {}) => {
   return mount({
     template: `
       <div>
-        <v-row v-if="isLoding">
+        <v-row v-if="isLoading">
           <v-col v-for="item in 4" :key="item" cols="6" md="3">
             <v-card elevation="0"><v-card-text>Loading...</v-card-text></v-card>
           </v-col>
@@ -17,19 +17,19 @@ const mountSitesWidgets = (props = {}) => {
         </v-row>
       </div>
     `,
-    props: ['isLoding', 'data'],
+    props: ['isLoading', 'data'],
   }, { props })
 }
 
 describe('SitesWidgets', () => {
-  it('shows skeleton when isLoding is true', () => {
-    const wrapper = mountSitesWidgets({ isLoding: true })
+  it('shows skeleton when isLoading is true', () => {
+    const wrapper = mountSitesWidgets({ isLoading: true })
     expect(wrapper.text()).toContain('Loading...')
   })
 
-  it('shows data when isLoding is false', () => {
+  it('shows data when isLoading is false', () => {
     const wrapper = mountSitesWidgets({
-      isLoding: false,
+      isLoading: false,
       data: { total_users: 10, total_locations: 5 },
     })
     expect(wrapper.text()).toContain('10')

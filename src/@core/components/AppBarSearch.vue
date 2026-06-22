@@ -1,124 +1,117 @@
-<script setup>
-import { PerfectScrollbar } from "vue3-perfect-scrollbar";
-import { VList, VListItem, VListSubheader } from "vuetify/components";
+<script setup lang="ts">
+  import PerfectScrollbar from 'vue3-perfect-scrollbar'
+  import { VList, VListItem, VListSubheader } from 'vuetify/components'
 
-const props = defineProps({
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-  searchQuery: {
-    type: String,
-    required: true,
-  },
-  searchResults: {
-    type: Array,
-    required: true,
-  },
-  suggestions: {
-    type: Array,
-    required: false,
-  },
-  noDataSuggestion: {
-    type: Array,
-    required: false,
-  },
-});
-
-const emit = defineEmits([
-  "update:isDialogVisible",
-  "update:searchQuery",
-  "itemSelected",
-]);
-
-const { ctrl_k, meta_k } = useMagicKeys();
-const refSearchList = ref();
-const searchQuery = ref(structuredClone(toRaw(props.searchQuery)));
-const refSearchInput = ref();
-const isLocalDialogVisible = ref(structuredClone(toRaw(props.isDialogVisible)));
-const searchResults = ref(structuredClone(toRaw(props.searchResults)));
-
-// 👉 Watching props change
-watch(props, () => {
-  isLocalDialogVisible.value = structuredClone(toRaw(props.isDialogVisible));
-  searchResults.value = structuredClone(toRaw(props.searchResults));
-  searchQuery.value = structuredClone(toRaw(props.searchQuery));
-});
-watch([ctrl_k, meta_k], () => {
-  isLocalDialogVisible.value = true;
-  emit("update:isDialogVisible", true);
-});
-
-// 👉 clear search result and close the dialog
-const clearSearchAndCloseDialog = () => {
-  emit("update:isDialogVisible", false);
-  emit("update:searchQuery", "");
-};
-
-watchEffect(() => {
-  if (!searchQuery.value.length) searchResults.value = [];
-});
-
-const getFocusOnSearchList = (e) => {
-  if (e.key === "ArrowDown") {
-    e.preventDefault();
-    refSearchList.value?.focus("next");
-  } else if (e.key === "ArrowUp") {
-    e.preventDefault();
-    refSearchList.value?.focus("prev");
+  interface SearchItem {
+    title: string
+    icon?: string
+    customIcon?: string
+    header?: string
+    content?: SearchItem[]
   }
-};
 
-const dialogModelValueUpdate = (val) => {
-  emit("update:isDialogVisible", val);
-  emit("update:searchQuery", "");
-};
+  const props = defineProps<{
+    isDialogVisible: boolean
+    searchQuery: string
+    searchResults: SearchItem[]
+    suggestions?: SearchItem[]
+    noDataSuggestion?: SearchItem[]
+  }>()
 
-const resolveCategories = (val) => {
-  if (val === "dashboards") return "Dashboards";
-  if (val === "appsPages") return "Apps & Pages";
-  if (val === "userInterface") return "User Interface";
-  if (val === "formsTables") return "Forms Tables";
-  if (val === "chartsMisc") return "Charts Misc";
+  const emit = defineEmits<{
+    (e: 'update:isDialogVisible', val: boolean): void
+    (e: 'update:searchQuery', val: string): void
+    (e: 'itemSelected', item: SearchItem): void
+  }>()
 
-  return "Misc";
-};
+  const { ctrlK, metaK } = useMagicKeys()
+  const refSearchList = ref()
+  const searchQuery = ref(structuredClone(toRaw(props.searchQuery)))
+  const refSearchInput = ref()
+  const isLocalDialogVisible = ref(structuredClone(toRaw(props.isDialogVisible)))
+  const searchResults = ref(structuredClone(toRaw(props.searchResults)))
+
+  // 👉 Watching props change
+  watch(props, () => {
+    isLocalDialogVisible.value = structuredClone(toRaw(props.isDialogVisible))
+    searchResults.value = structuredClone(toRaw(props.searchResults))
+    searchQuery.value = structuredClone(toRaw(props.searchQuery))
+  })
+  watch([ctrlK, metaK], () => {
+    isLocalDialogVisible.value = true
+    emit('update:isDialogVisible', true)
+  })
+
+  // 👉 clear search result and close the dialog
+  const clearSearchAndCloseDialog = () => {
+    emit('update:isDialogVisible', false)
+    emit('update:searchQuery', '')
+  }
+
+  watchEffect(() => {
+    if (!searchQuery.value.length) searchResults.value = []
+  })
+
+  const getFocusOnSearchList = (e: KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      refSearchList.value?.focus('next')
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      refSearchList.value?.focus('prev')
+    }
+  }
+
+  const dialogModelValueUpdate = (val: boolean) => {
+    emit('update:isDialogVisible', val)
+    emit('update:searchQuery', '')
+  }
+
+  const resolveCategories = (val: string) => {
+    if (val === 'dashboards') return 'Dashboards'
+    if (val === 'appsPages') return 'Apps & Pages'
+    if (val === 'userInterface') return 'User Interface'
+    if (val === 'formsTables') return 'Forms Tables'
+    if (val === 'chartsMisc') return 'Charts Misc'
+
+    return 'Misc'
+  }
 </script>
 
 <template>
   <VDialog
+    class="app-bar-search-dialog"
+    :fullscreen="$vuetify.display.width < 600"
+    :height="$vuetify.display.smAndUp ? '550' : '100%'"
     max-width="600"
     :model-value="isLocalDialogVisible"
-    :height="$vuetify.display.smAndUp ? '550' : '100%'"
-    :fullscreen="$vuetify.display.width < 600"
-    class="app-bar-search-dialog"
-    @update:model-value="dialogModelValueUpdate"
     @keyup.esc="clearSearchAndCloseDialog"
+    @update:model-value="dialogModelValueUpdate"
   >
-    <VCard height="100%" width="100%" class="position-relative">
+    <VCard class="position-relative" height="100%" width="100%">
       <VCardText class="pt-1" style="max-height: 65px">
         <!-- 👉 Search Input -->
         <VTextField
           ref="refSearchInput"
           v-model="searchQuery"
           autofocus
-          variant="plain"
-          density="comfortable"
           class="app-bar-autocomplete-box"
-          @keyup.esc="clearSearchAndCloseDialog"
+          density="comfortable"
+          variant="plain"
           @keydown="getFocusOnSearchList"
+          @keyup.esc="clearSearchAndCloseDialog"
           @update:model-value="$emit('update:searchQuery', searchQuery)"
         >
           <!-- 👉 Prepend Inner -->
           <template #prepend-inner>
             <VBtn
-              icon
-              variant="text"
-              color="default"
-              size="x-small"
               class="text-high-emphasis ms-n1"
+              color="default"
+              icon
+              size="x-small"
+              variant="text"
             >
-              <VIcon size="22" icon="tabler-search" />
+              <VIcon icon="mdi-magnify" size="22" />
             </VBtn>
           </template>
 
@@ -133,13 +126,13 @@ const resolveCategories = (val) => {
               </div>
 
               <VBtn
-                icon
-                variant="text"
                 color="default"
+                icon
                 size="x-small"
+                variant="text"
                 @click="clearSearchAndCloseDialog"
               >
-                <VIcon size="22" icon="tabler-x" />
+                <VIcon icon="mdi-close" size="22" />
               </VBtn>
             </div>
           </template>
@@ -151,15 +144,15 @@ const resolveCategories = (val) => {
 
       <!-- 👉 Perfect Scrollbar -->
       <PerfectScrollbar
-        :options="{ wheelPropagation: false, suppressScrollX: true }"
         class="h-100"
+        :options="{ wheelPropagation: false, suppressScrollX: true }"
       >
         <!-- 👉 Search List -->
         <VList
           v-show="searchQuery.length && !!searchResults.length"
           ref="refSearchList"
-          density="compact"
           class="app-bar-search-list"
+          density="compact"
         >
           <!-- 👉 list Item /List Sub header -->
           <template v-for="item in searchResults" :key="item.title">
@@ -168,7 +161,7 @@ const resolveCategories = (val) => {
             </VListSubheader>
 
             <template v-else>
-              <slot name="searchResult" :item="item">
+              <slot :item="item" name="searchResult">
                 <VListItem link @click="$emit('itemSelected', item)">
                   <template #prepend>
                     <div class="d-flex align-center">
@@ -180,18 +173,18 @@ const resolveCategories = (val) => {
                         />
                         <span
                           v-else
-                          v-html="item.customIcon"
                           class="custom-icon"
-                        ></span>
+                          v-html="item.customIcon"
+                        />
                       </div>
                     </div>
                   </template>
 
                   <template #append>
                     <VIcon
-                      size="20"
-                      icon="tabler-corner-down-left"
                       class="enter-icon text-disabled"
+                      icon="mdi-corner-down-left"
+                      size="20"
                     />
                   </template>
 
@@ -212,9 +205,9 @@ const resolveCategories = (val) => {
                 <VCol
                   v-for="suggestion in props.suggestions"
                   :key="suggestion.title"
+                  class="ps-6"
                   cols="12"
                   sm="6"
-                  class="ps-6"
                 >
                   <p class="text-xs text-disabled text-uppercase">
                     {{ suggestion.title }}
@@ -224,9 +217,9 @@ const resolveCategories = (val) => {
                     <VListItem
                       v-for="item in suggestion.content"
                       :key="item.title"
+                      class="app-bar-search-suggestion"
                       link
                       :title="item.title"
-                      class="app-bar-search-suggestion"
                       @click="$emit('itemSelected', item)"
                     >
                       <template #prepend>
@@ -239,9 +232,9 @@ const resolveCategories = (val) => {
                             />
                             <span
                               v-else
-                              v-html="item.customIcon"
                               class="custom-icon"
-                            ></span>
+                              v-html="item.customIcon"
+                            />
                           </div>
                         </div>
                       </template>
@@ -260,12 +253,10 @@ const resolveCategories = (val) => {
               <div
                 class="app-bar-search-suggestions d-flex flex-column align-center justify-center text-high-emphasis h-100"
               >
-                <VIcon size="75" icon="tabler-file-x" />
+                <VIcon icon="mdi-file-remove-outline" size="75" />
                 <h6 class="text-h6 my-3">No Result For "{{ searchQuery }}"</h6>
                 <div v-if="props.noDataSuggestion" class="mt-8">
-                  <span class="d-flex justify-center text-disabled"
-                    >Try searching for</span
-                  >
+                  <span class="d-flex justify-center text-disabled">Try searching for</span>
                   <h6
                     v-for="suggestion in props.noDataSuggestion"
                     :key="suggestion.title"
@@ -281,9 +272,9 @@ const resolveCategories = (val) => {
                         />
                         <span
                           v-else
-                          v-html="suggestion.customIcon"
                           class="custom-icon"
-                        ></span>
+                          v-html="suggestion.customIcon"
+                        />
                       </div>
                     </div>
                     <span class="text-sm">{{ suggestion.title }}</span>

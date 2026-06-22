@@ -1,23 +1,23 @@
-<script setup>
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-    required: false,
-    default: 'primary',
-  },
-  icon: {
-    type: String,
-    required: true,
-  },
-  stats: {
-    type: String,
-    required: true,
-  },
-})
+<script setup lang="ts">
+  const props = defineProps({
+    title: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      required: false,
+      default: 'primary',
+    },
+    icon: {
+      type: String,
+      required: true,
+    },
+    stats: {
+      type: String,
+      required: true,
+    },
+  })
 </script>
 
 <template>
@@ -31,8 +31,8 @@ const props = defineProps({
       </div>
 
       <VAvatar
-        :icon="props.icon"
         :color="props.color"
+        :icon="props.icon"
         :size="42"
         variant="tonal"
       />

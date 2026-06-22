@@ -1,38 +1,38 @@
 <!-- BreadcrumbNav.vue -->
 <template>
-  <v-breadcrumbs :items="items" class="pa-0 mb-4 custom-breadcrumbs" divider="">
-    <template v-slot:prepend>
+  <v-breadcrumbs class="pa-0 mb-4 custom-breadcrumbs" divider="" :items="items">
+    <template #prepend>
       <svg
-        width="20"
+        fill="none"
         height="20"
         viewBox="0 0 20 20"
-        fill="none"
+        width="20"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
           d="M5.62516 16.0419H14.3752C15.2956 16.0419 16.0418 15.2957 16.0418 14.3752V8.12523L10.0002 3.95856L3.9585 8.12523V14.3752C3.9585 15.2957 4.70469 16.0419 5.62516 16.0419Z"
           stroke="#25343E"
-          stroke-width="1.5"
           stroke-linecap="round"
           stroke-linejoin="round"
+          stroke-width="1.5"
         />
         <path
           d="M8.12465 13.1244C8.12465 12.2039 8.87085 11.4577 9.79132 11.4577H10.208C11.1285 11.4577 11.8747 12.2039 11.8747 13.1244V16.0411H8.12465V13.1244Z"
           stroke="#25343E"
-          stroke-width="1.5"
           stroke-linecap="round"
           stroke-linejoin="round"
+          stroke-width="1.5"
         />
       </svg>
     </template>
-    <template v-slot:divider>
-      <v-icon size="18" class="text-grey-darken-1">mdi-chevron-left</v-icon>
+    <template #divider>
+      <v-icon class="text-grey-darken-1" size="18">mdi-chevron-left</v-icon>
     </template>
-    <template v-slot:title="{ item }">
+    <template #title="{ item }">
       <router-link
         v-if="!item.disabled"
-        :to="item.href"
         class="text-decoration-none text-grey-darken-1 text-13"
+        :to="item.href ?? ''"
       >
         {{ item.title }}
       </router-link>
@@ -41,14 +41,16 @@
   </v-breadcrumbs>
 </template>
 
-<script setup>
-defineProps({
-  items: {
-    type: Array,
-    required: true,
-    default: () => [],
-  },
-});
+<script setup lang="ts">
+  interface BreadcrumbItem {
+    title: string
+    href?: string
+    disabled?: boolean
+  }
+
+  defineProps<{
+    items: BreadcrumbItem[]
+  }>()
 </script>
 
 <style lang="scss" scoped>

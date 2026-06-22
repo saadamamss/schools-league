@@ -1,218 +1,193 @@
-<script setup>
-import { useAuthStore } from "@/stores/Auth";
-import { requiredValidator } from "@validators";
-import { toast } from "vue3-toastify";
-import { ref, reactive, onBeforeMount, watch } from "vue";
-import { useRouter } from "vue-router";
-import {
-  confirmPasswordValidator,
-  emailValidator,
-} from "@/@core/utils/validators";
-import { useDashboardStore } from "@/stores/Dashboard";
-import { computed } from "vue";
-import { useDebounceFn, watchDebounced } from "@vueuse/core";
+<script setup lang="ts">
+  import { useAuthStore } from '@/stores/auth'
+  import { useAppStore } from '@/stores/app'
+  import { requiredValidator } from '@validators'
+  import { computed, onBeforeMount, reactive, ref, watch } from 'vue'
+  import { useRouter } from 'vue-router'
+  import {
+    confirmPasswordValidator,
+    emailValidator,
+  } from '@/@core/utils/validators'
+  import { useDashboardStore } from '@/stores/dashboard'
 
-const dashboardStore = useDashboardStore();
-const isPasswordVisible = ref(false);
-const isConfirmPasswordVisible = ref(false);
-const form = ref(null);
+  import { useDebounceFn, watchDebounced } from '@vueuse/core'
 
-const formState = reactive({
-  sa_id: "",
-  first_name: "",
-  middle_name: "",
-  last_name: "",
-  email: "",
-  phone: "",
-  password: "",
-  password_confirmation: "",
-  birth_date: "",
-  gender: "male",
-  city_id: null,
-  nationality_id: null,
-  location_id: null,
-});
+  const dashboardStore = useDashboardStore()
+  const isPasswordVisible = ref(false)
+  const isConfirmPasswordVisible = ref(false)
+  const form = ref<any>(null)
 
-// const saIdValidator = (value) => {
-//   if (!value) return "رقم الهوية مطلوب";
-//   if (!/^\d+$/.test(value)) return "يجب أن يحتوي رقم الهوية على أرقام فقط";
-//   if (value.length !== 10) return "يجب أن يتكون رقم الهوية من 10 أرقام";
-//   return true;
-// };
+  const formState = reactive({
+    saId: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    passwordConfirmation: '',
+    birthDate: '',
+    gender: 'male',
+    cityId: null as number | null,
+    nationalityId: null as number | null,
+    locationId: null as number | null,
+  })
 
-const saIdValidator = (value) => {
-  if (!value) return "رقم الهوية مطلوب";
+  // const saIdValidator = (value) => {
+  //   if (!value) return "رقم الهوية مطلوب";
+  //   if (!/^\d+$/.test(value)) return "يجب أن يحتوي رقم الهوية على أرقام فقط";
+  //   if (value.length !== 10) return "يجب أن يتكون رقم الهوية من 10 أرقام";
+  //   return true;
+  // };
 
-  // Remove any non-digit characters
-  const cleanedId = value.replace(/\D/g, "");
+  const saIdValidator = (value: string) => {
+    if (!value) return 'رقم الهوية مطلوب'
 
-  // Check if it matches the regex: starts with 1, 2, or 3, followed by 9 digits (total 10 digits)
-  const saudiIdRegex = /^[1-3]\d{9}$/;
-  if (!saudiIdRegex.test(cleanedId)) {
-    return "يجب أن يبدأ رقم الهوية بـ 1 أو 2 أو 3 ويتكون من 10 أرقام";
-  }
+    // Remove any non-digit characters
+    const cleanedId = value.replace(/\D/g, '')
 
-  return true; // Valid
-};
-const ksaPhoneValidator = (value) => {
-  // Remove all non-digit characters
-  const cleaned = value.replace(/\D/g, "");
-
-  const pattern = /^(05\d{8}|9665\d{8}|\+9665\d{8})$/;
-
-  if (!pattern.test(cleaned)) {
-    return "يجب إدخال رقم جوال سعودي صحيح (يبدأ بـ 05 أو +9665)";
-  }
-
-  return true;
-};
-const cities = computed(() => dashboardStore.city);
-const events = computed(() => dashboardStore.events);
-const nationalities = computed(() => dashboardStore.nationlities);
-const eventsSearch = ref("");
-const auth = useAuthStore();
-const router = useRouter();
-
-const isSubmitting = ref(false);
-
-const registerUser = async () => {
-  const { valid } = await form.value.validate();
-
-  if (!valid) return;
-
-  if (formState.password !== formState.password_confirmation) {
-    toast.error("كلمة المرور وتأكيدها غير متطابقين", {
-      rtl: true,
-      hideProgressBar: true,
-      position: "top-center",
-    });
-    return;
-  }
-
-  try {
-    isSubmitting.value = true;
-    const response = await auth.register(formState);
-    if (response.data?.email && response.data?.expires_in) {
-      toast.success("تم التسجيل بنجاح", {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-      setTimeout(() => {
-        router.push({ name: "VerifyAccount" });
-      }, 1000);
-    }
-  } catch (error) {
-    console.error("Registration error:", error);
-
-    if (error.response?.status == 422) {
-      const errors = error.response.data.errors;
-      Object.keys(errors).forEach((key) => {
-        toast.error(errors[key][0], {
-          rtl: true,
-          hideProgressBar: true,
-          position: "top-right",
-        });
-      });
-
-      return;
+    // Check if it matches the regex: starts with 1, 2, or 3, followed by 9 digits (total 10 digits)
+    const saudiIdRegex = /^[1-3]\d{9}$/
+    if (!saudiIdRegex.test(cleanedId)) {
+      return 'يجب أن يبدأ رقم الهوية بـ 1 أو 2 أو 3 ويتكون من 10 أرقام'
     }
 
-    if (error?.response?.data?.status?.message) {
-      toast.error(error.response.data.status.message, {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-    } else if (error?.message) {
-      toast.error(error.message, {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-    } else {
-      toast.error("حدث خطأ أثناء التسجيل", {
-        rtl: true,
-        hideProgressBar: true,
-        position: "top-center",
-      });
-    }
-  } finally {
-    isSubmitting.value = false;
+    return true // Valid
   }
-};
+  const ksaPhoneValidator = (value: string) => {
+    // Remove all non-digit characters
+    const cleaned = value.replace(/\D/g, '')
 
-const genderOPtions = [
-  {
-    title: "ذكر",
-    value: "male",
-  },
-  {
-    title: "أنثى",
-    value: "female",
-  },
-];
+    const pattern = /^(05\d{8}|9665\d{8}|\+9665\d{8})$/
 
-const itemProps = (item) => {
-  return {
-    disabled: !item.is_active,
-    class: !item.is_active ? "text-disabled" : "",
-  };
-};
+    if (!pattern.test(cleaned)) {
+      return 'يجب إدخال رقم جوال سعودي صحيح (يبدأ بـ 05 أو +9665)'
+    }
 
-const citiesLoading = ref(false);
-const searchCities = useDebounceFn(async (value) => {
-  citiesLoading.value = true;
-  await dashboardStore.fetchCities(value);
-  citiesLoading.value = false;
-}, 500);
+    return true
+  }
+  const cities = computed(() => dashboardStore.city)
+  const locations = computed(() => dashboardStore.locations)
+  const nationalities = computed(() => dashboardStore.nationalities)
+  const locationsSearch = ref('')
+  const auth = useAuthStore()
+  const router = useRouter()
+  const appStore = useAppStore()
 
-const nationalitiesLoading = ref(false);
-const searchNationalities = useDebounceFn(async (value) => {
-  nationalitiesLoading.value = true;
-  await dashboardStore.fetchNationalities(value);
-  nationalitiesLoading.value = false;
-}, 500);
+  const isSubmitting = ref(false)
 
-const loacationLoading = ref(false);
-const searchEvents = useDebounceFn(async (value) => {
-  loacationLoading.value = true;
-  await dashboardStore.fetchEvents(eventsSearch.value, formState.city_id);
-  loacationLoading.value = false;
-}, 500);
+  const registerUser = async () => {
+    const { valid } = await form.value?.validate() ?? { valid: false }
 
-watchDebounced(
-  () => formState.city_id,
-  async () => {
-    loacationLoading.value = true;
-    formState.location_id = null;
-    await dashboardStore.fetchEvents(eventsSearch.value, formState.city_id);
-    loacationLoading.value = false;
-  },
-  { deep: true, debounce: 300 }
-);
-onBeforeMount(() => {
-  dashboardStore.fetchCities();
-  dashboardStore.fetchNationalities();
-});
+    if (!valid) return
+
+    if (formState.password !== formState.passwordConfirmation) {
+      appStore.showSnackbar({ message: 'كلمة المرور وتأكيدها غير متطابقين', color: 'error' })
+      return
+    }
+
+    try {
+      isSubmitting.value = true
+      const response = await auth.register(formState)
+      if (response?.status?.success) {
+        appStore.showSnackbar({ message: 'تم التسجيل بنجاح', color: 'success' })
+        setTimeout(() => {
+          router.push({ name: 'VerifyAccount' })
+        }, 1000)
+      }
+    } catch (error: any) {
+      if (error.response?.status === 422) {
+        const errors = error.response.data.errors
+        Object.keys(errors).forEach(key => {
+          appStore.showSnackbar({ message: errors[key][0], color: 'error' })
+        })
+
+        return
+      }
+
+      if (error?.response?.data?.status?.message) {
+        appStore.showSnackbar({ message: error.response.data.status.message, color: 'error' })
+      } else if (error?.message) {
+        appStore.showSnackbar({ message: error.message, color: 'error' })
+      } else {
+        appStore.showSnackbar({ message: 'حدث خطأ أثناء التسجيل', color: 'error' })
+      }
+    } finally {
+      isSubmitting.value = false
+    }
+  }
+
+  const genderOPtions = [
+    {
+      title: 'ذكر',
+      value: 'male',
+    },
+    {
+      title: 'أنثى',
+      value: 'female',
+    },
+  ]
+
+  const itemProps = (item: Record<string, any>) => {
+    return {
+      disabled: !item.isActive,
+      class: !item.isActive ? 'text-disabled' : '',
+    }
+  }
+
+  const citiesLoading = ref(false)
+  const searchCities = useDebounceFn(async value => {
+    citiesLoading.value = true
+    await dashboardStore.fetchCities(value)
+    citiesLoading.value = false
+  }, 500)
+
+  const nationalitiesLoading = ref(false)
+  const searchNationalities = useDebounceFn(async value => {
+    nationalitiesLoading.value = true
+    await dashboardStore.fetchNationalities(value)
+    nationalitiesLoading.value = false
+  }, 500)
+
+  const loacationLoading = ref(false)
+  const searchLocations = useDebounceFn(async value => {
+    loacationLoading.value = true
+    await dashboardStore.fetchLocations(locationsSearch.value, formState.cityId ?? undefined)
+    loacationLoading.value = false
+  }, 500)
+
+  watchDebounced(
+    () => formState.cityId,
+    async () => {
+      loacationLoading.value = true
+      formState.locationId = null
+      await dashboardStore.fetchLocations(locationsSearch.value, formState.cityId ?? undefined)
+      loacationLoading.value = false
+    },
+    { deep: true, debounce: 300 }
+  )
+  onBeforeMount(() => {
+    dashboardStore.fetchCities()
+    dashboardStore.fetchNationalities()
+  })
 </script>
 
 <template>
-  <VCard rounded="xl" class="px-10 py-4" style="margin-block: 50px">
-    <VCardTitle style="flex: 0" class="px-0">
+  <VCard class="px-10 py-4" rounded="xl" style="margin-block: 50px">
+    <VCardTitle class="px-0" style="flex: 0">
       <h1 class="text-h4 font-weight-bold">تسجيل حساب جديد</h1>
       <p class="text-basea">أدخل بياناتك لإنشاء حساب جديد.</p>
     </VCardTitle>
-    <v-divider></v-divider>
-    <VCardText style="flex: 0" class="px-0">
+    <v-divider />
+    <VCardText class="px-0" style="flex: 0">
       <VForm ref="form" @submit.prevent="registerUser">
         <VRow>
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               رقم الهوية
             </label>
             <VTextField
-              v-model="formState.sa_id"
+              v-model="formState.saId"
               density="comfortable"
               placeholder="ادخل رقم الهوية"
               rounded="lg"
@@ -220,24 +195,24 @@ onBeforeMount(() => {
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               الاسم الأول
             </label>
             <VTextField
-              v-model="formState.first_name"
+              v-model="formState.firstName"
               density="comfortable"
               placeholder="ادخل الاسم الأول"
               rounded="lg"
               :rules="[requiredValidator]"
             />
           </VCol>
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               الاسم الثانى
             </label>
             <VTextField
-              v-model="formState.middle_name"
+              v-model="formState.middleName"
               density="comfortable"
               placeholder="ادخل الاسم الثانى"
               rounded="lg"
@@ -245,12 +220,12 @@ onBeforeMount(() => {
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               الاسم الأخير
             </label>
             <VTextField
-              v-model="formState.last_name"
+              v-model="formState.lastName"
               density="comfortable"
               placeholder="ادخل الاسم الأخير"
               rounded="lg"
@@ -258,7 +233,7 @@ onBeforeMount(() => {
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               البريد الإلكترونى
             </label>
@@ -270,7 +245,7 @@ onBeforeMount(() => {
               :rules="[requiredValidator, emailValidator]"
             />
           </VCol>
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               رقم الجوال
             </label>
@@ -283,33 +258,35 @@ onBeforeMount(() => {
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               كلمة المرور
             </label>
             <VTextField
               v-model="formState.password"
-              variant="outlined"
+              :append-inner-icon="
+                isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'
+              "
               bg-color="white"
               density="comfortable"
               placeholder="أدخل كلمة المرور"
               rounded="lg"
               :rules="[requiredValidator]"
               :type="isPasswordVisible ? 'text' : 'password'"
-              :append-inner-icon="
-                isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
-              "
+              variant="outlined"
               @click:append-inner="isPasswordVisible = !isPasswordVisible"
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               تأكيد كلمة المرور
             </label>
             <VTextField
-              v-model="formState.password_confirmation"
-              variant="outlined"
+              v-model="formState.passwordConfirmation"
+              :append-inner-icon="
+                isConfirmPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'
+              "
               bg-color="white"
               density="comfortable"
               placeholder="أعد إدخال كلمة المرور"
@@ -318,25 +295,23 @@ onBeforeMount(() => {
                 requiredValidator,
                 confirmPasswordValidator(
                   formState.password,
-                  formState.password_confirmation
+                  formState.passwordConfirmation
                 ),
               ]"
               :type="isConfirmPasswordVisible ? 'text' : 'password'"
-              :append-inner-icon="
-                isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
-              "
+              variant="outlined"
               @click:append-inner="
                 isConfirmPasswordVisible = !isConfirmPasswordVisible
               "
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               تاريخ الميلاد
             </label>
             <VTextField
-              v-model="formState.birth_date"
+              v-model="formState.birthDate"
               density="comfortable"
               placeholder="ادخل تاريخ الميلاد"
               rounded="lg"
@@ -345,88 +320,88 @@ onBeforeMount(() => {
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               الجنس
             </label>
             <VSelect
               v-model="formState.gender"
-              :items="genderOPtions"
               density="comfortable"
+              :items="genderOPtions"
               placeholder="اختر الجنس"
               rounded="md"
               :rules="[requiredValidator]"
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               المدينة
             </label>
 
             <v-autocomplete
-              v-model="formState.city_id"
-              :items="cities"
-              :loading="citiesLoading"
-              item-title="name.ar"
-              placeholder="ادخل المدينة"
-              label="ادخل المدينة"
-              item-value="id"
-              no-data-text="لا توجد بيانات!"
-              rounded="pill"
+              v-model="formState.cityId"
               clearable
+              item-title="name.ar"
+              item-value="id"
+              :items="cities"
+              label="ادخل المدينة"
+              :loading="citiesLoading"
+              no-data-text="لا توجد بيانات!"
+              placeholder="ادخل المدينة"
+              rounded="pill"
               :rules="[requiredValidator]"
               @update:search="searchCities"
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4">
+          <VCol class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
               الجنسية
             </label>
             <v-autocomplete
-              v-model="formState.nationality_id"
-              :items="nationalities"
-              :loading="nationalitiesLoading"
-              item-title="name_ar"
-              placeholder="ادخل الجنسية"
-              label="ادخل الجنسية"
-              item-value="id"
-              no-data-text="لا توجد بيانات!"
-              rounded="pill"
+              v-model="formState.nationalityId"
               clearable
+              item-title="name_ar"
+              item-value="id"
+              :items="nationalities"
+              label="ادخل الجنسية"
+              :loading="nationalitiesLoading"
+              no-data-text="لا توجد بيانات!"
+              placeholder="ادخل الجنسية"
+              rounded="pill"
               @update:search="searchNationalities"
             />
           </VCol>
 
-          <VCol cols="12" md="6" class="py-1 mb-4" v-if="formState.city_id">
+          <VCol v-if="formState.cityId" class="py-1 mb-4" cols="12" md="6">
             <label class="d-block text-subtitle-1 mb-2 text-black">
-              الفعالية
+              الموقع
             </label>
             <v-autocomplete
-              v-model="formState.location_id"
-              :loading="loacationLoading"
-              :items="events"
-              v-model:search="eventsSearch"
-              item-title="name"
-              placeholder="ادخل الفعالية"
-              label="ادخل الفعالية"
-              item-value="id"
-              no-data-text="لا توجد بيانات!"
-              rounded="pill"
+              v-model="formState.locationId"
+              v-model:search="locationsSearch"
               clearable
-              @update:search="searchEvents"
+              item-title="name"
+              item-value="id"
+              :items="locations"
+              label="ادخل الموقع"
+              :loading="loacationLoading"
+              no-data-text="لا توجد بيانات!"
+              placeholder="ادخل الموقع"
+              rounded="pill"
+              @update:search="searchLocations"
             />
           </VCol>
 
-          <VCol cols="12" class="d-flex justify-end align-center mt-4">
+          <VCol class="d-flex justify-end align-center mt-4" cols="12">
             <VBtn
-              rounded="pill"
-              :loading="isSubmitting"
-              type="submit"
-              size="large"
-              height="54"
               color="primary"
+              height="54"
+              :loading="isSubmitting"
+              rounded="pill"
+              size="large"
+              type="submit"
               width="180"
             >
               تسجيل

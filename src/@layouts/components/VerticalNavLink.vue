@@ -1,19 +1,16 @@
-<script setup>
-import { useLayouts } from "@layouts";
-import { config } from "@layouts/config";
-import { can } from "@layouts/plugins/casl";
-import { getComputedNavLinkToProp, isNavLinkActive } from "@layouts/utils";
+<script setup lang="ts">
+  import { useLayouts } from '@layouts'
+  import { config } from '@layouts/config'
+  import { can } from '@layouts/plugins/casl'
+  import { getComputedNavLinkToProp, isNavLinkActive } from '@layouts/utils'
 
-const props = defineProps({
-  item: {
-    type: null,
-    required: true,
-  },
-});
+  const props = defineProps<{
+    item: Record<string, any>
+  }>()
 
-const { width: windowWidth } = useWindowSize();
-const { isVerticalNavMini, dynamicI18nProps } = useLayouts();
-const hideTitleAndBadge = isVerticalNavMini(windowWidth);
+  const { width: windowWidth } = useWindowSize()
+  const { isVerticalNavMini, dynamicI18nProps } = useLayouts()
+  const hideTitleAndBadge = isVerticalNavMini(windowWidth.value)
 </script>
 
 <template>
@@ -25,13 +22,13 @@ const hideTitleAndBadge = isVerticalNavMini(windowWidth);
     <Component
       :is="item.to ? 'RouterLink' : 'a'"
       v-bind="getComputedNavLinkToProp(item)"
-      exact
       :class="{
         'router-link-active router-link-exact-active': isNavLinkActive(
           item,
           $router
         ),
       }"
+      exact
     >
       <!-- :is="config.app.iconRenderer || 'div'" -->
       <!-- v-bind="item.icon || config.verticalNav.defaultNavItemIconProps" -->
@@ -43,7 +40,7 @@ const hideTitleAndBadge = isVerticalNavMini(windowWidth);
       <TransitionGroup name="transition-slide-x">
         <!-- 👉 Title -->
         <Component
-          is="span"
+          :is="'span'"
           v-show="!hideTitleAndBadge"
           key="title"
           class="nav-item-title"
@@ -54,7 +51,7 @@ const hideTitleAndBadge = isVerticalNavMini(windowWidth);
 
         <!-- 👉 Badge -->
         <Component
-          is="span"
+          :is="'span'"
           v-if="item.badgeContent"
           v-show="!hideTitleAndBadge"
           key="badge"

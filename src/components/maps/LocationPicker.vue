@@ -1,155 +1,93 @@
 <template>
   <div class="location-picker">
-    <div ref="mapContainer" class="map-container rounded-lg"></div>
+    <iframe
+      class="map-container rounded-lg"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      :src="embedUrl"
+    />
+    <VRow class="mt-2">
+      <VCol cols="6">
+        <VTextField
+          label="خط العرض"
+          :model-value="latStr"
+          placeholder="24.7136"
+          type="number"
+          @update:model-value="onLatChange"
+        />
+      </VCol>
+      <VCol cols="6">
+        <VTextField
+          label="خط الطول"
+          :model-value="lngStr"
+          placeholder="46.6753"
+          type="number"
+          @update:model-value="onLngChange"
+        />
+      </VCol>
+    </VRow>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, watch } from "vue";
-import { loadGoogleMapsScript } from "@/plugins/google-maps";
+<script setup lang="ts">
+  import { computed, ref } from 'vue'
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({ lat: 24.7136, lng: 46.6753 }), // Default to Riyadh coordinates
-  },
-  isDraggable: {
-    type: Boolean,
-    default: true,
-  },
-  isClickable: {
-    type: Boolean,
-    default: true,
-  },
-});
+  const props = defineProps({
+    modelValue: {
+      type: Object,
+      default: () => ({ lat: 24.7136, lng: 46.6753 }),
+    },
+    isDraggable: {
+      type: Boolean,
+      default: true,
+    },
+    isClickable: {
+      type: Boolean,
+      default: true,
+    },
+  })
 
-const emit = defineEmits(["update:modelValue"]);
+  const emit = defineEmits(['update:modelValue'])
 
-const mapContainer = ref(null);
-let map = null;
-let marker = null;
+  const latStr = ref(String(props.modelValue.lat))
+  const lngStr = ref(String(props.modelValue.lng))
 
-const initMap = async () => {
-  try {
-    const maps = await loadGoogleMapsScript();
+  const embedUrl = computed(() => {
+    const lat = parseFloat(latStr.value)
+    const lng = parseFloat(lngStr.value)
+    if (isNaN(lat) || isNaN(lng)) return ''
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01},${lat - 0.01},${lng + 0.01},${lat + 0.01}&layer=mapnik&marker=${lat},${lng}`
+  })
 
-    // Create the map instance
-    map = new maps.Map(mapContainer.value, {
-      center: {
-        lat: parseFloat(props.modelValue.lat),
-        lng: parseFloat(props.modelValue.lng),
-      },
-      zoom: 15,
-      mapTypeControl: true,
-      streetViewControl: false,
-      fullscreenControl: false,
-      mapTypeId: maps.MapTypeId.ROADMAP,
-      styles: [
-        {
-          featureType: "poi",
-          elementType: "labels",
-          stylers: [{ visibility: "off" }],
-        },
-      ],
-    });
-
-    // Create the marker
-    marker = new maps.Marker({
-      position: {
-        lat: parseFloat(props.modelValue.lat),
-        lng: parseFloat(props.modelValue.lng),
-      },
-      map: map,
-      draggable: props.isDraggable,
-      animation: maps.Animation.DROP,
-    });
-
-    // Add search box
-    const input = document.createElement("input");
-    input.className = "location-search-input";
-    input.placeholder = "ابحث عن موقع...";
-    map.controls[maps.ControlPosition.TOP_RIGHT].push(input);
-
-    const searchBox = new maps.places.SearchBox(input);
-
-    // Listen for search box events
-    searchBox.addListener("places_changed", () => {
-      const places = searchBox.getPlaces();
-      if (places.length === 0) return;
-
-      const place = places[0];
-      if (!place.geometry || !place.geometry.location) return;
-
-      // Update map and marker
-      map.setCenter(place.geometry.location);
-      marker.setPosition(place.geometry.location);
-      updateCoordinates(place.geometry.location);
-    });
-
-    // Add click event to map
-    map.addListener("click", (e) => {
-      if (props.isClickable) {
-        const position = e.latLng;
-        marker.setPosition(position);
-        updateCoordinates(position);
-      }
-    });
-
-    // Add dragend event to marker
-    marker.addListener("dragend", () => {
-      const position = marker.getPosition();
-      updateCoordinates(position);
-    });
-  } catch (error) {
-    console.error("Failed to load Google Maps:", error);
-  }
-};
-
-const updateCoordinates = (position) => {
-  emit("update:modelValue", { lat: position.lat(), lng: position.lng() });
-};
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (map && marker && newValue) {
-      const position = {
-        lat: parseFloat(newValue.lat),
-        lng: parseFloat(newValue.lng),
-      };
-      marker.setPosition(position);
-      map.setCenter(position);
+  const onLatChange = (val: string) => {
+    latStr.value = val
+    const lat = parseFloat(val)
+    const lng = parseFloat(lngStr.value)
+    if (!isNaN(lat) && !isNaN(lng)) {
+      emit('update:modelValue', { lat, lng })
     }
-  },
-  { deep: true }
-);
+  }
 
-onMounted(() => {
-  initMap();
-});
+  const onLngChange = (val: string) => {
+    lngStr.value = val
+    const lat = parseFloat(latStr.value)
+    const lng = parseFloat(val)
+    if (!isNaN(lat) && !isNaN(lng)) {
+      emit('update:modelValue', { lat, lng })
+    }
+  }
 </script>
 
 <style scoped>
 .map-container {
   width: 100%;
   height: 400px;
-  background-color: #f5f5f5;
+  background-color: rgb(var(--v-theme-background));
   position: relative;
-}
-
-.location-search-input {
-  margin: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 14px;
-  width: 250px;
-  direction: rtl;
 }
 
 .location-picker :deep(.v-field) {
   border-radius: 8px;
-  background-color: rgb(250, 250, 250);
+  background-color: rgb(var(--v-theme-background));
 }
 </style>

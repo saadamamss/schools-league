@@ -1,33 +1,27 @@
-<script setup>
-const props = defineProps({
-  confirmationMsg: {
-    type: String,
-    required: true,
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-})
+<script setup lang="ts">
+  const props = defineProps<{
+    confirmationMsg: string
+    isDialogVisible: boolean
+  }>()
 
-const emit = defineEmits([
-  'update:isDialogVisible',
-  'confirm',
-])
+  const emit = defineEmits<{
+    (e: 'update:isDialogVisible', val: boolean): void
+    (e: 'confirm', val: boolean): void
+  }>()
 
-const updateModelValue = val => {
-  emit('update:isDialogVisible', val)
-}
+  const updateModelValue = (val: boolean) => {
+    emit('update:isDialogVisible', val)
+  }
 
-const onConfirmation = () => {
-  emit('confirm', true)
-  updateModelValue(false)
-}
+  const onConfirmation = () => {
+    emit('confirm', true)
+    updateModelValue(false)
+  }
 
-const onCancel = () => {
-  emit('confirm', false)
-  emit('update:isDialogVisible', false)
-}
+  const onCancel = () => {
+    emit('confirm', false)
+    emit('update:isDialogVisible', false)
+  }
 </script>
 
 <template>
@@ -40,11 +34,11 @@ const onCancel = () => {
     <VCard class="text-center px-10 py-6">
       <VCardText>
         <VBtn
-          icon
-          variant="outlined"
-          color="warning"
           class="mb-4"
+          color="warning"
+          icon
           style="width: 88px; height: 88px; pointer-events: none;"
+          variant="outlined"
         >
           <span class="text-5xl">!</span>
         </VBtn>

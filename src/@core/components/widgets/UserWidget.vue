@@ -1,28 +1,13 @@
-<script setup>
-defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-  noShadow: {
-    type: Boolean,
-    default: false,
-  },
-  noPadding: {
-    type: Boolean,
-    default: false,
-  },
-  transparent: {
-    type: Boolean,
-    default: false,
-  },
-  size: {
-    type: String,
-    default: "medium",
-  },
-});
+<script setup lang="ts">
+  defineProps<{
+    user: Record<string, any>
+    noShadow?: boolean
+    noPadding?: boolean
+    transparent?: boolean
+    size?: string
+  }>()
 
-const fallbackAvatar = "https://placehold.co/400";
+  const fallbackAvatar = 'https://placehold.co/400'
 </script>
 
 <template>
@@ -39,12 +24,12 @@ const fallbackAvatar = "https://placehold.co/400";
         <span class="avatar-wrapper d-flex justify-center align-center">
           <!-- <img :src="fallbackAvatar" alt="User avatar" /> -->
           <img
-            :src="user?.personal_image || user?.avatar_image || fallbackAvatar"
-            class="avatar-img border rounded-circle"
             alt="User avatar"
+            class="avatar-img border rounded-circle"
+            :src="user?.personal_image || user?.avatar_image || fallbackAvatar"
             :style="{ width: size === 'small' ? '2rem' : '2.5rem' }"
-            @error="$event.target.src = fallbackAvatar"
-          />
+            @error="(e: any) => { if (e?.target) e.target.src = fallbackAvatar }"
+          >
         </span>
       </div>
       <div>
@@ -61,7 +46,7 @@ const fallbackAvatar = "https://placehold.co/400";
 
 <style lang="scss" scoped>
 .user-widget {
-  background-color: white;
+  background-color: rgb(var(--v-theme-surface));
   padding: 1rem;
   border-radius: 8px;
 

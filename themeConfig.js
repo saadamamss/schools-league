@@ -1,25 +1,25 @@
-import { breakpointsVuetify } from "@vueuse/core";
-import { VIcon } from "vuetify/components";
+import { breakpointsVuetify } from '@vueuse/core'
+import { VIcon } from 'vuetify/components'
 
 // ❗ Logo SVG must be imported with ?raw suffix
-import { defineThemeConfig } from "@core";
-import { RouteTransitions, Skins } from "@core/enums";
+import { defineThemeConfig } from '@core'
+import { RouteTransitions, Skins } from '@core/enums'
 import {
   AppContentLayoutNav,
   ContentWidth,
   FooterType,
   NavbarType,
-} from "@layouts/enums";
+} from '@layouts/enums'
 
 // const browserDarkMode = window.matchMedia(
 //   "(prefers-color-scheme: dark)"
 // ).matches;
 
-const browserDarkMode = localStorage.getItem("darkTheme") || "light";
+const browserDarkMode = localStorage.getItem('darkTheme') || 'light'
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
-    title: "دوري المدارس",
-    en_title: "school-league",
+    title: 'دوري المدارس',
+    en_title: 'school-league',
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,
     overlayNavFromBreakpoint: breakpointsVuetify.md + 16,
@@ -37,19 +37,19 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
   footer: { type: FooterType.Static },
   verticalNav: {
     isVerticalNavCollapsed: false,
-    defaultNavItemIconProps: { icon: "tabler-circle", size: 10 },
+    defaultNavItemIconProps: { icon: 'tabler-circle', size: 10 },
     isVerticalNavSemiDark: false,
   },
   horizontalNav: {
-    type: "sticky",
-    transition: "slide-y-reverse-transition",
+    type: 'sticky',
+    transition: 'slide-y-reverse-transition',
   },
   icons: {
-    chevronDown: { icon: "tabler-chevron-down" },
-    chevronRight: { icon: "tabler-chevron-right", size: 18 },
-    close: { icon: "tabler-x" },
-    verticalNavPinned: { icon: "tabler-circle-dot" },
-    verticalNavUnPinned: { icon: "tabler-circle" },
-    sectionTitlePlaceholder: { icon: "tabler-separator" },
+    chevronDown: { icon: 'tabler-chevron-down' },
+    chevronRight: { icon: 'tabler-chevron-right', size: 18 },
+    close: { icon: 'tabler-x' },
+    verticalNavPinned: { icon: 'tabler-circle-dot' },
+    verticalNavUnPinned: { icon: 'tabler-circle' },
+    sectionTitlePlaceholder: { icon: 'tabler-separator' },
   },
-});
+})

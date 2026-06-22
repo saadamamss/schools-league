@@ -1,188 +1,188 @@
 <template>
   <svg
-    width="24"
+    fill="none"
     height="25"
     viewBox="0 0 24 25"
-    fill="none"
+    width="24"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="transparent"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <path
       d="M16 11.163L19.4752 9.02083C19.7837 8.83064 20.171 8.82226 20.4875 8.99893C20.8039 9.1756 21 9.50966 21 9.87209V16.8689C21 17.2313 20.8039 17.5654 20.4875 17.742C20.171 17.9187 19.7838 17.9103 19.4753 17.7202L16 15.578"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
     />
     <rect
-      x="3"
-      y="6.87012"
-      width="13"
       height="13"
       rx="3"
       stroke="transparent"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
-    />
-    <rect
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
       x="3"
       y="6.87012"
-      width="13"
+    />
+    <rect
       height="13"
       rx="3"
       stroke="currentColor"
-      stroke-opacity="0.2"
-      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
+      stroke-opacity="0.2"
+      stroke-width="1.5"
+      width="13"
+      x="3"
+      y="6.87012"
     />
   </svg>
 </template>

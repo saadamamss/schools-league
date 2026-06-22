@@ -1,22 +1,22 @@
 <template>
   <v-select
-    item-title="label"
-    item-value="value"
+    bg-color="rgba(var(--v-theme-on-surface), 0.05)"
+    class="custom-select"
     hide-details
     hide-no-data
-    return-object
+    item-title="label"
+    item-value="value"
+    :menu-icon="''"
     min-width="100"
     open-on-clear
-    bg-color="#F8F9F9"
-    class="custom-select"
-    :menu-icon="''"
+    return-object
   >
     <template #append-inner>
       <svg
-        width="10"
+        fill="none"
         height="6"
         viewBox="0 0 10 6"
-        fill="none"
+        width="10"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path

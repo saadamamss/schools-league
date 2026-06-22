@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
+    "allowJs": true,
     "jsx": "preserve",
     "jsxImportSource": "vue",
     "resolveJsonModule": true,
@@ -18,10 +19,13 @@
       "@core/*": ["./src/@core/*"],
       "@styles/*": ["./src/styles/*"],
       "@axios": ["./src/plugins/axios"],
-      "@validators": ["./src/@core/utils/validators"]
+      "@validators": ["./src/@core/utils/validators"],
+      "@layouts": ["./src/@layouts/index"],
+      "@layouts/*": ["./src/@layouts/*"],
+      "@themeConfig": ["./themeConfig.js"]
     },
     "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.d.ts", "auto-imports.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

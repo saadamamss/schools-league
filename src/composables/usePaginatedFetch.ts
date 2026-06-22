@@ -1,7 +1,7 @@
-import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
+import { computed, type ComputedRef, onMounted, onUnmounted, type Ref, ref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import axiosIns from '@/plugins/axios'
-import { useAppStore } from '@/stores/app'
+import { useApiError } from '@/composables/useApiError'
 import type { ApiResponse } from '@/types/models'
 
 interface UsePaginatedFetchOptions {
@@ -15,6 +15,7 @@ interface UsePaginatedFetchReturn<T> {
   data: Ref<T[]>
   isLoading: Ref<boolean>
   initialLoading: Ref<boolean>
+  fetchError: Ref<boolean>
   perPage: Ref<number>
   totalItems: Ref<number>
   currentPage: Ref<number>
@@ -26,6 +27,7 @@ interface UsePaginatedFetchReturn<T> {
   handleSearch: () => void
   applyFilters: (filters: Record<string, unknown>) => void
   clearFilters: () => void
+  cleanup: () => void
 }
 
 export function usePaginatedFetch<T = any> (
@@ -39,10 +41,12 @@ export function usePaginatedFetch<T = any> (
     extractStatistics = false,
   } = options
 
-  const appStore = useAppStore()
+  const { handleError } = useApiError('usePaginatedFetch')
+  let abortController: AbortController | null = null
   const data = ref<T[]>([]) as Ref<T[]>
   const isLoading = ref(true)
   const initialLoading = ref(true)
+  const fetchError = ref(false)
   const perPage = ref(defaultPerPage)
   const totalItems = ref(0)
   const currentPage = ref(1)
@@ -50,14 +54,29 @@ export function usePaginatedFetch<T = any> (
   const currentFilters = ref<Record<string, unknown>>({})
   const widgetsData = ref<Record<string, number> | null>(null)
 
+  const cleanup = () => {
+    if (abortController) {
+      abortController.abort()
+      abortController = null
+    }
+  }
+
+  onUnmounted(cleanup)
+
   const searchFilter = computed((): Record<string, string> =>
     search.value?.trim() ? { search: search.value.trim() } : {}
   )
 
   const fetchData = async (extraParams: Record<string, unknown> = {}) => {
+    if (abortController) {
+      abortController.abort()
+    }
+    abortController = new AbortController()
     isLoading.value = true
+    fetchError.value = false
     try {
       const response = await axiosIns.get(endpoint, {
+        signal: abortController.signal,
         params: {
           per_page: perPage.value,
           page: currentPage.value,
@@ -76,12 +95,10 @@ export function usePaginatedFetch<T = any> (
           widgetsData.value = responseData?.statistics ?? null
         }
       }
-    } catch (err: any) {
-      console.error('Error fetching data:', err)
-      appStore.showSnackbar({
-        message: err.response?.data?.message || 'حدث خطأ فى جلب بيانات الجدول',
-        color: 'error',
-      })
+    } catch (err: unknown) {
+      if ((err as { name?: string })?.name === 'CanceledError') return
+      fetchError.value = true
+      handleError(err, { fallback: 'حدث خطأ فى جلب بيانات الجدول' })
     } finally {
       isLoading.value = false
       initialLoading.value = false
@@ -110,13 +127,14 @@ export function usePaginatedFetch<T = any> (
   }
 
   if (fetchOnMount) {
-    fetchData()
+    onMounted(() => { fetchData() })
   }
 
   return {
     data,
     isLoading,
     initialLoading,
+    fetchError,
     perPage,
     totalItems,
     currentPage,
@@ -128,5 +146,6 @@ export function usePaginatedFetch<T = any> (
     handleSearch,
     applyFilters,
     clearFilters,
+    cleanup,
   }
 }

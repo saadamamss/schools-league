@@ -26,16 +26,30 @@ export default defineConfig({
       },
     }),
     ViteFonts({
-      google: { families: ['Public Sans:300,400,500,600,700,800,900'] },
+      google: {
+        families: [
+          'Public Sans:300,400,500,600,700,800,900',
+          'Tajawal:400,500,700',
+        ],
+      },
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico'],
+      includeAssets: ['favicon_1.ico', 'zimam-qwa.svg'],
       manifest: {
         name: 'Schools League',
         short_name: 'SchoolsLeague',
         theme_color: '#ffffff',
+        background_color: '#ffffff',
         display: 'standalone',
+        icons: [
+          { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
       },
     }),
     AutoImport({
@@ -72,6 +86,26 @@ export default defineConfig({
       },
     },
   },
-  server: { port: 3000, host: true },
-  build: { target: 'esnext' },
+  server: {
+    port: 3000,
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5231',
+        changeOrigin: true,
+      },
+    },
+  },
+  build: {
+    target: 'esnext',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vuetify: ['vuetify'],
+          chartjs: ['chart.js'],
+          vendor: ['vue', 'vue-router', 'pinia', 'axios', '@vueuse/core'],
+        },
+      },
+    },
+  },
 })

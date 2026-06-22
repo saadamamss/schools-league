@@ -1,14 +1,20 @@
-<script setup>
-defineProps({
-  title: "",
-  number: 0,
-});
+<script setup lang="ts">
+  defineProps({
+    title: {
+      type: String,
+      default: '',
+    },
+    number: {
+      type: Number,
+      default: 0,
+    },
+  })
 </script>
 
 <template>
-  <VCard elevation="0" class="rounded-lg widget-card">
+  <VCard class="rounded-lg widget-card" elevation="0">
     <div class="back">
-      <img src="/imgs/widget.png" alt="" />
+      <img alt="" src="/imgs/widget.png">
     </div>
     <v-card-text class="px-1 py-2 pb-0 card-content">
       <div class="d-flex flex-column gap-4 pa-4">
