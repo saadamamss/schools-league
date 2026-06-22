@@ -1,0 +1,48 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=SchoolLeagueDB;User=root;Password=${DB_PASSWORD:-pass1234};SslMode=Preferred;
+      - JwtSettings__Key=${JWT_KEY:?JWT key is required}
+      - JwtSettings__Issuer=SchoolsLeague
+      - JwtSettings__Audience=SchoolsLeagueClient
+      - CorsSettings__Origins__0=${CORS_ORIGIN:-http://localhost:3000}
+      - MailSettings__Host=${MAIL_HOST:?Mail host required}
+      - MailSettings__Port=${MAIL_PORT:-587}
+      - MailSettings__Username=${MAIL_USER:-}
+      - MailSettings__Password=${MAIL_PASS:-}
+      - MailSettings__From=${MAIL_FROM:-noreply@schoolsleague.com}
+      - MailSettings__BaseUrl=${APP_URL:-http://localhost:3000}
+    volumes:
+      - uploads:/app/wwwroot/uploads
+      - logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-pass1234}
+      - MYSQL_DATABASE=SchoolLeagueDB
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  uploads:
+  logs:
