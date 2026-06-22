@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Serilog;
 using Services;
@@ -281,6 +282,16 @@ builder.Services.AddResponseCompression(options =>
     options.EnableForHttps = true;
 });
 
+// Forwarded headers — needed behind Railway's TLS proxy (railway-hikari)
+// so the app sees the original HTTPS scheme, client IP, etc.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor;
+    // Only trust the known proxy network (Railway internal)
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
 
 // Middleware pipeline — ORDER MATTERS
@@ -301,26 +312,29 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// 3. Exception handler wraps all downstream middleware
+// 3. Forwarded headers (before security redirect, so HttpsRedirection sees the real scheme)
+app.UseForwardedHeaders();
+
+// 4. Exception handler wraps all downstream middleware
 app.UseMiddleware<ExceptionMiddleware>();
 
-// 4. Request logging (inside exception handler's try/catch)
+// 5. Request logging (inside exception handler's try/catch)
 app.UseMiddleware<Common.Middleware.LoggingMiddleware>();
 app.UseSerilogRequestLogging();
 
-// 5. Security redirect
+// 6. Security redirect
 app.UseHttpsRedirection();
 
-// 6. CORS (must be before auth)
+// 7. CORS (must be before auth)
 app.UseCors();
 
-// 7. Rate limiter
+// 8. Rate limiter
 app.UseRateLimiter();
 
-// 8. Cookie-to-header bridge (before auth)
+// 9. Cookie-to-header bridge (before auth)
 app.UseMiddleware<Common.Middleware.CookieToHeaderMiddleware>();
 
-// 9. Auth
+// 10. Auth
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -357,19 +371,19 @@ app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.Health
 // Controllers
 app.MapControllers();
 
-// Migration (dev only) + Seed
-if (app.Environment.IsDevelopment())
+// Migration + Seed (all environments; seed is idempotent)
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
+    if (!app.Environment.IsDevelopment())
+        Log.Information("Database migrated successfully in {Env} environment.", app.Environment.EnvironmentName);
     await DbSeedr.SeedAsync(app.Services);
 }
-else
-{
-    Log.Warning("Auto-migration is disabled in production. Run scripts/deploy.sql manually.");
 
-    // Validate critical configuration
+// Configuration validation (production only)
+if (!app.Environment.IsDevelopment())
+{
     var jwtKeyCheck = app.Configuration["JwtSettings:Key"];
     if (string.IsNullOrEmpty(jwtKeyCheck) || jwtKeyCheck == "CHANGE-ME-32-CHAR-SECRET-KEY-HERE!" || jwtKeyCheck.Length < 32)
         Log.Error("JWT secret key is not properly set for production. Set via JwtSettings__Key env var.");
@@ -381,19 +395,6 @@ else
     var connStr = app.Configuration.GetConnectionString("DefaultConnection");
     if (connStr?.Contains("root") == true || connStr?.Contains("pass1234") == true)
         Log.Warning("Database connection string appears to use default dev credentials. Override via ConnectionStrings__DefaultConnection env var.");
-
-    // Verify DB connectivity
-    try
-    {
-        using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        if (!await db.Database.CanConnectAsync())
-            Log.Error("Cannot connect to database. Check ConnectionStrings__DefaultConnection.");
-    }
-    catch (Exception ex)
-    {
-        Log.Error(ex, "Failed to connect to database on startup.");
-    }
 }
 
 // Graceful shutdown

@@ -170,15 +170,18 @@ public class AuthController : BaseController
 
     // ── Cookie helpers ──────────────────────────────────────────────
     private bool UseSecureCookie =>
-        HttpContext.Request.IsHttps;
+        // Railway terminates TLS at the proxy, so IsHttps is false.
+        // Check X-Forwarded-Proto first, then fall back to IsHttps.
+        HttpContext.Request.Headers["X-Forwarded-Proto"].ToString() == "https"
+        || HttpContext.Request.IsHttps;
 
     private void SetRefreshCookie(string name, string value)
     {
         Response.Cookies.Append(name, value, new CookieOptions
         {
             HttpOnly = true,
-            Secure = UseSecureCookie,
-            SameSite = SameSiteMode.Strict,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Path = "/api/dashboard/auth",
             MaxAge = TimeSpan.FromDays(7),
         });
@@ -189,8 +192,8 @@ public class AuthController : BaseController
         Response.Cookies.Append(name, string.Empty, new CookieOptions
         {
             HttpOnly = true,
-            Secure = UseSecureCookie,
-            SameSite = SameSiteMode.Strict,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Path = "/api/dashboard/auth",
             Expires = DateTimeOffset.UnixEpoch,
         });
