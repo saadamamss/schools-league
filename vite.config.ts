@@ -91,7 +91,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:5231',
+        target: 'https://schools-league-production.up.railway.app',
         changeOrigin: true,
       },
     },
